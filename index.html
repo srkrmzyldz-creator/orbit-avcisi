@@ -801,6 +801,7 @@ const cam={x:0,y:0};
 let state='play',time=0,flash=0,spawnT=0,bossT=40,sessionKills=0,tab='market';
 const enemies=[],pb=[],eb=[],boxes=[],parts=[],texts=[],rings=[];
 function muzzle(x,y,a,am){const c=am&&am.id==='kuvars'?'#5ee0ff':(am&&am.col)||'#5ee0ff';for(let i=0;i<3;i++)parts.push({x,y,vx:Math.cos(a+rnd(-.35,.35))*rnd(120,260),vy:Math.sin(a+rnd(-.35,.35))*rnd(120,260),l:.14,m:.14,c:'#ffffff',s:2});parts.push({x,y,vx:0,vy:0,l:.08,m:.08,c,s:7})}
+window.__G=()=>({state:state,p:p,M:M,S:S});
 function ring(x,y,col,R){rings.push({x,y,r:4,R,l:.55,m:.55,c:col})}
 
 /* ---------- Çizim yardımcıları ---------- */
@@ -4105,7 +4106,6 @@ window.__oaGrp={size:gSize,kill(){D.gk++;persist();if(G.st>0)paintBar()}};
 paint();
 })();
 requestAnimationFrame(frame);
-window.__G=()=>({state:(typeof state!=='undefined'?state:undefined),p:(typeof p!=='undefined'?p:undefined),M:(typeof M!=='undefined'?M:undefined),S:(typeof S!=='undefined'?S:undefined)});
 };
 </script>
 <script>
