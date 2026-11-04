@@ -829,6 +829,7 @@ function __autoFire(){
   try{
     if(enemies.length)enemies.length=0;
     __trackRemote();
+    return;
     if(state!=='play'||!p||p.cd>0||window.__dead)return;
     if(dist(p,ST)<ST.safe)return;
     const now=Date.now();
@@ -847,7 +848,7 @@ function __checkHits(){
   try{
     const now=Date.now();
     if(!window.__maxSh||p.sh>window.__maxSh)window.__maxSh=p.sh;
-    if(window.__dead){ if(now>window.__deadUntil){p.hp=val('hull');p.sh=window.__maxSh;window.__dead=false;} return; }
+    if(state!=='play')return;
     for(const s of window.__shots){
       if(s.hit||s.m!==M.n)continue;
       const age=(now-s.t)/1000; if(age>0.9)continue;
@@ -860,7 +861,7 @@ function __checkHits(){
         if(p.sh>0){const k=Math.min(p.sh,rem);p.sh-=k;rem-=k}
         if(rem>0)p.hp=Math.max(0,p.hp-rem);
         window.__hits=(window.__hits||0)+1;
-        if(p.hp<=0){window.__dead=true;window.__deadUntil=now+3000}
+        if(p.hp<=0){try{die()}catch(e){}}
       }
     }
   }catch(e){window.__hitErr=String((e&&e.message)||e)}
