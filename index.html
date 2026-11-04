@@ -4105,11 +4105,14 @@ window.__oaGrp={size:gSize,kill(){D.gk++;persist();if(G.st>0)paintBar()}};
 paint();
 })();
 requestAnimationFrame(frame);
+window.__G=()=>({state:(typeof state!=='undefined'?state:undefined),p:(typeof p!=='undefined'?p:undefined),M:(typeof M!=='undefined'?M:undefined),S:(typeof S!=='undefined'?S:undefined)});
 };
 </script>
 <script>
-function __drawRemote(){
+function __drawRemote(){try{__drawRemote2()}catch(e){}}
+function __drawRemote2(){
   const now=Date.now();
+  const M=(window.__G&&window.__G().M)||{n:''};
   for(const k in window.__rem){
     const o=window.__rem[k];
     if(!o.rec||now-o.seen>5000||o.rec.m!==M.n)continue;
@@ -4141,6 +4144,7 @@ function __drawRemote(){
   const CFG={apiKey:"AIzaSyBJQ3VvkI5x-S_YM6C5qh2HnthHNX4BimY",authDomain:"black-galaxy-8e90c.firebaseapp.com",databaseURL:"https://black-galaxy-8e90c-default-rtdb.europe-west1.firebasedatabase.app",projectId:"black-galaxy-8e90c",storageBucket:"black-galaxy-8e90c.firebasestorage.app",messagingSenderId:"924179797714",appId:"1:924179797714:web:faba5d32651da7d5863f0b"};
   const ROOM='orbit-test';
   let db=null,uid=null,ok=false;
+  const G=()=>{try{return window.__G()}catch(e){return {}}};
   const dbg={err:'',ok:0,auth:'bekliyor'};
   // Ekran köşesinde durum satırı
   const box=document.createElement('div');
@@ -4148,7 +4152,7 @@ function __drawRemote(){
   box.style.cssText='position:fixed;left:4px;top:4px;z-index:9999;max-width:70vw;font:600 10px monospace;color:#9fe6ff;background:rgba(0,0,0,.6);padding:3px 5px;border-radius:4px;pointer-events:none;white-space:pre-wrap';
   document.addEventListener('DOMContentLoaded',()=>document.body.appendChild(box));
   setInterval(()=>{
-    const st=(typeof state!=='undefined')?state:'?';
+    const st=G().state||'?';
     box.textContent='giriş: '+(uid?'tamam':dbg.auth)+' | durum: '+st+'\nyazma: '+(dbg.ok?'başarılı':'yok')+(dbg.err?'\nHATA: '+dbg.err:'')+'\nuzak oyuncu: '+Object.keys(window.__rem).length;
   },500);
   window.__rem={};        // uid -> {rec,dx,dy,da,seen}
@@ -4186,7 +4190,9 @@ function __drawRemote(){
   }
 
   function publish(){
-    if(!ok||!db||typeof state==='undefined'||state!=='play')return;
+    const g=G();
+    if(!ok||!db||!g.p||g.state!=='play')return;
+    const p=g.p,M=g.M,S=g.S;
     const hp=Math.max(0,Math.min(100,Number(p.hp)||0));
     db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,m:M.n,n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
   }
@@ -4202,9 +4208,7 @@ function __drawRemote(){
   const __fa=fireAmmo;
   fireAmmo=function(){
     const a=__fa();
-    if(ok&&db&&state==='play'){
-      db.ref('rooms/'+ROOM+'/shots').push({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),by:uid,m:M.n}).catch(()=>{});
-    }
+    try{const g=G();if(ok&&db&&g.p&&g.state==='play'){const p=g.p,M=g.M;db.ref('rooms/'+ROOM+'/shots').push({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),by:uid,m:M.n}).catch(()=>{})}}catch(e){}
     return a;
   };
 })();
