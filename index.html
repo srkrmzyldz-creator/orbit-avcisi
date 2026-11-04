@@ -651,7 +651,7 @@ const MD=[
   {id:'kal',n:'Kalkan jeneratörü',d:'Her biri +250 kalkan verir.',price:1000,max:3}
 ];
 const GEAR={
-  kal:[{n:'SG-1',v:150,a:.05,price:600},{n:'SG-2',v:350,a:.1,price:1800},{n:'SG-3',v:700,a:.18,price:5000}],
+  kal:[{n:'SG-1',v:2000,a:.05,price:600},{n:'SG-2',v:5000,a:.1,price:1800},{n:'SG-3',v:10000,a:.18,price:5000}],
   hiz:[{n:'SF-1',v:.06,price:500},{n:'SF-2',v:.12,price:1500},{n:'SF-3',v:.2,price:4000}]
 };
 const DS={kal:'Kalkan kapasitesi ve hasar emilimi sağlar.',hiz:'Gemi jeneratör yuvasına takıldığında hız bonusu sağlar.'};
@@ -801,7 +801,7 @@ const cam={x:0,y:0};
 let state='play',time=0,flash=0,spawnT=0,bossT=40,sessionKills=0,tab='market';
 const enemies=[],pb=[],eb=[],boxes=[],parts=[],texts=[],rings=[];
 function muzzle(x,y,a,am){const c=am&&am.id==='kuvars'?'#5ee0ff':(am&&am.col)||'#5ee0ff';for(let i=0;i<3;i++)parts.push({x,y,vx:Math.cos(a+rnd(-.35,.35))*rnd(120,260),vy:Math.sin(a+rnd(-.35,.35))*rnd(120,260),l:.14,m:.14,c:'#ffffff',s:2});parts.push({x,y,vx:0,vy:0,l:.08,m:.08,c,s:7})}
-window.__G=()=>({state:state,p:p,M:M,S:S,sid:(()=>{try{return ship().id}catch(e){return ''}})(),mh:(()=>{try{return val('hull')}catch(e){return 100}})()});
+window.__G=()=>({state:state,p:p,M:M,S:S,dr:(()=>{try{return dnA().slice(0,8).map(d=>({t:d.t,l:d.l,s:(d.s||[]).map(x=>x||'-')}))}catch(e){return[]}})(),sid:(()=>{try{return ship().id}catch(e){return ''}})(),mh:(()=>{try{return val('hull')}catch(e){return 100}})()});
 {const __origVol=volleyAmmo;volleyAmmo=function(n){const a=__origVol(n);try{if(window.__shotPub)window.__shotPub(n)}catch(e){}return a};}
 {const __origRock=fireRocket;fireRocket=function(){const a=__origRock();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 {const __origFire=fireAmmo;fireAmmo=function(){const a=__origFire();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
@@ -858,6 +858,7 @@ function __checkHits(){
       const d=Math.hypot(p.x-(s.x+dx*t), p.y-(s.y+dy*t));
       if(d<=(p.r||14)+8){
         s.hit=true;
+        if(cpuT>0)continue;
         let rem=(s.n||1)*LDMG[2];
         if(p.sh>0){const k=Math.min(p.sh,rem);p.sh-=k;rem-=k}
         if(rem>0)p.hp=Math.max(0,p.hp-rem);
@@ -881,6 +882,11 @@ function __drawRemote(){
       const sp=ship();const sid=(r.sid&&SPR[r.sid])?r.sid:sp.id;
       ctx.scale(sp.sc,sp.sc);SPR[sid](ctx,false,time);
       ctx.restore();
+      const ds=Array.isArray(r.dr)?r.dr:[];
+      ds.forEach((d,i)=>{const an=time*0.9+i*(Math.PI*2/Math.max(1,ds.length));const rr=(sp.len||60)*sp.sc*0.55+12;
+        ctx.save();ctx.translate(o.dx+Math.cos(an)*rr,o.dy+Math.sin(an)*rr);ctx.scale(0.6,0.6);
+        try{drawDroneBody(ctx,d.t,(d.s||[]).map(x=>x==='-'?'':x),d.l||1)}catch(e){}
+        ctx.restore()});
       ctx.save();ctx.fillStyle='#ffb0a0';ctx.font='700 12px '+FONT;ctx.textAlign='center';
       ctx.fillText(r.n||'Pilot',o.dx,o.dy-26);ctx.restore();
     }
@@ -4260,7 +4266,7 @@ requestAnimationFrame(frame);
     if(g.state!=='play'){db.ref('rooms/'+ROOM+'/players/'+uid).update({hp:0}).catch(()=>{});return}
     const p=g.p,M=g.M,S=g.S;
     const mh=g.mh||100;const hp=Math.max(0,Math.min(100,Math.round(100*(Number(p.hp)||0)/mh)));
-    db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,t:Date.now(),m:M.n,sid:g.sid||'',n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
+    db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,t:Date.now(),m:M.n,sid:g.sid||'',dr:g.dr||[],n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
   }
   // onDisconnect ile ayrılan oyuncuyu temizle
   const origPub=publish;
