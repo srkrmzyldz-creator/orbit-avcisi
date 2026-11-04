@@ -801,12 +801,33 @@ const cam={x:0,y:0};
 let state='play',time=0,flash=0,spawnT=0,bossT=40,sessionKills=0,tab='market';
 const enemies=[],pb=[],eb=[],boxes=[],parts=[],texts=[],rings=[];
 function muzzle(x,y,a,am){const c=am&&am.id==='kuvars'?'#5ee0ff':(am&&am.col)||'#5ee0ff';for(let i=0;i<3;i++)parts.push({x,y,vx:Math.cos(a+rnd(-.35,.35))*rnd(120,260),vy:Math.sin(a+rnd(-.35,.35))*rnd(120,260),l:.14,m:.14,c:'#ffffff',s:2});parts.push({x,y,vx:0,vy:0,l:.08,m:.08,c,s:7})}
-window.__G=()=>({state:state,p:p,M:M,S:S,sid:(()=>{try{return ship().id}catch(e){return ''}})()});
+window.__G=()=>({state:state,p:p,M:M,S:S,sid:(()=>{try{return ship().id}catch(e){return ''}})(),mh:(()=>{try{return val('hull')}catch(e){return 100}})()});
 {const __origVol=volleyAmmo;volleyAmmo=function(n){const a=__origVol(n);try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 {const __origRock=fireRocket;fireRocket=function(){const a=__origRock();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 {const __origFire=fireAmmo;fireAmmo=function(){const a=__origFire();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
+function __pickRemote(){
+  const now=Date.now();let best=null,bd=650;
+  for(const k in window.__rem){
+    const o=window.__rem[k],r=o.rec;
+    if(!r||now-o.seen>5000||r.m!==M.n||!(r.hp>0)||o.dx===null)continue;
+    const d=Math.hypot(o.dx-p.x,o.dy-p.y);
+    if(d<bd){bd=d;best={uid:k,o:o}}
+  }
+  if(!best)return null;
+  return {remote:true,uid:best.uid,x:best.o.dx,y:best.o.dy,hp:best.o.rec.hp,r:14,t:{r:14,col:'#ff7a59',n:best.o.rec.n||'Pilot'}};
+}
+function __trackRemote(){
+  const t=p.target;
+  if(!t||!t.remote)return;
+  const o=window.__rem[t.uid];
+  if(!o||!o.rec||Date.now()-o.seen>5000||!(o.rec.hp>0)||o.dx===null||dist(p,{x:o.dx,y:o.dy})>1000){
+    p.target=null;if(atk)atkOff();return;
+  }
+  t.x=o.dx;t.y=o.dy;t.hp=o.rec.hp;
+}
 function __autoFire(){
   try{
+    __trackRemote();
     if(state!=='play'||!p||p.cd>0||window.__dead)return;
     if(dist(p,ST)<ST.safe)return;
     const now=Date.now();
@@ -825,7 +846,7 @@ function __checkHits(){
   try{
     const now=Date.now();
     if(!window.__maxSh||p.sh>window.__maxSh)window.__maxSh=p.sh;
-    if(window.__dead){ if(now>window.__deadUntil){p.hp=100;p.sh=window.__maxSh;window.__dead=false;} return; }
+    if(window.__dead){ if(now>window.__deadUntil){p.hp=val('hull');p.sh=window.__maxSh;window.__dead=false;} return; }
     for(const s of window.__shots){
       if(s.hit||s.m!==M.n)continue;
       const age=(now-s.t)/1000; if(age>0.9)continue;
@@ -834,7 +855,7 @@ function __checkHits(){
       const d=Math.hypot(p.x-(s.x+dx*t), p.y-(s.y+dy*t));
       if(d<=(p.r||14)+8){
         s.hit=true;
-        let rem=20;
+        let rem=(val('hull')||100)*0.1;
         if(p.sh>0){const k=Math.min(p.sh,rem);p.sh-=k;rem-=k}
         if(rem>0)p.hp=Math.max(0,p.hp-rem);
         window.__hits=(window.__hits||0)+1;
@@ -3448,7 +3469,7 @@ $('atk').addEventListener('click',()=>{
   if(dist(p,ST)<ST.safe||nearPortal()){toast('Üs içinde ateş edilemez.');return}
   let b=p.target&&p.target.hp>0&&dist(p,p.target)<RANGE*1.2?p.target:null,bd=RANGE;
   if(!b)for(const e of enemies){const d=dist(p,e);if(foe(e)&&d<bd){b=e;bd=d}}
-  if(!b){toast('Yakında düşman yok.');return}
+  if(!b){const rt=__pickRemote();if(rt){p.target=rt;p.manual=false;atk=true;$('atk').classList.add('on');toast('Saldırı: oyuncu kilitlendi.');return}toast('Yakında düşman yok.');return}
   p.target=b;p.manual=false;atk=true;$('atk').classList.add('on');toast('Saldırı: hedef kilitlendi.');
 });
 
@@ -4236,7 +4257,7 @@ requestAnimationFrame(frame);
     const g=G();
     if(!ok||!db||!g.p||g.state!=='play')return;
     const p=g.p,M=g.M,S=g.S;
-    const hp=Math.max(0,Math.min(100,Number(p.hp)||0));
+    const mh=g.mh||100;const hp=Math.max(0,Math.min(100,Math.round(100*(Number(p.hp)||0)/mh)));
     db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,m:M.n,sid:g.sid||'',n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
   }
   // onDisconnect ile ayrılan oyuncuyu temizle
