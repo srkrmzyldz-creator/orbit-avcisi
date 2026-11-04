@@ -4141,6 +4141,16 @@ function __drawRemote(){
   const CFG={apiKey:"AIzaSyBJQ3VvkI5x-S_YM6C5qh2HnthHNX4BimY",authDomain:"black-galaxy-8e90c.firebaseapp.com",databaseURL:"https://black-galaxy-8e90c-default-rtdb.europe-west1.firebasedatabase.app",projectId:"black-galaxy-8e90c",storageBucket:"black-galaxy-8e90c.firebasestorage.app",messagingSenderId:"924179797714",appId:"1:924179797714:web:faba5d32651da7d5863f0b"};
   const ROOM='orbit-test';
   let db=null,uid=null,ok=false;
+  const dbg={err:'',ok:0,auth:'bekliyor'};
+  // Ekran köşesinde durum satırı
+  const box=document.createElement('div');
+  box.id='netDbg';
+  box.style.cssText='position:fixed;left:4px;top:4px;z-index:9999;max-width:70vw;font:600 10px monospace;color:#9fe6ff;background:rgba(0,0,0,.6);padding:3px 5px;border-radius:4px;pointer-events:none;white-space:pre-wrap';
+  document.addEventListener('DOMContentLoaded',()=>document.body.appendChild(box));
+  setInterval(()=>{
+    const st=(typeof state!=='undefined')?state:'?';
+    box.textContent='giriş: '+(uid?'tamam':dbg.auth)+' | durum: '+st+'\nyazma: '+(dbg.ok?'başarılı':'yok')+(dbg.err?'\nHATA: '+dbg.err:'')+'\nuzak oyuncu: '+Object.keys(window.__rem).length;
+  },500);
   window.__rem={};        // uid -> {rec,dx,dy,da,seen}
   window.__shots=[];      // {x,y,a,m,t}
   try{
@@ -4149,7 +4159,7 @@ function __drawRemote(){
     firebase.auth().onAuthStateChanged(u=>{
       if(u){uid=u.uid;ok=true;listen()}
     });
-    firebase.auth().signInAnonymously().catch(()=>{});
+    firebase.auth().signInAnonymously().catch(e=>{dbg.auth='HATA: '+((e&&e.code)||String(e))});
   }catch(e){ console.warn('Firebase yüklenemedi, tek oyunculu devam ediliyor',e) }
 
   function listen(){
@@ -4178,7 +4188,7 @@ function __drawRemote(){
   function publish(){
     if(!ok||!db||typeof state==='undefined'||state!=='play')return;
     const hp=Math.max(0,Math.min(100,Number(p.hp)||0));
-    db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,m:M.n,n:String(S.nick||'Pilot').slice(0,14)}).catch(()=>{});
+    db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,m:M.n,n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
   }
   // onDisconnect ile ayrılan oyuncuyu temizle
   const origPub=publish;
