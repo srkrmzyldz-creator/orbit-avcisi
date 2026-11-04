@@ -802,6 +802,8 @@ let state='play',time=0,flash=0,spawnT=0,bossT=40,sessionKills=0,tab='market';
 const enemies=[],pb=[],eb=[],boxes=[],parts=[],texts=[],rings=[];
 function muzzle(x,y,a,am){const c=am&&am.id==='kuvars'?'#5ee0ff':(am&&am.col)||'#5ee0ff';for(let i=0;i<3;i++)parts.push({x,y,vx:Math.cos(a+rnd(-.35,.35))*rnd(120,260),vy:Math.sin(a+rnd(-.35,.35))*rnd(120,260),l:.14,m:.14,c:'#ffffff',s:2});parts.push({x,y,vx:0,vy:0,l:.08,m:.08,c,s:7})}
 window.__G=()=>({state:state,p:p,M:M,S:S});
+{const __origVol=volleyAmmo;volleyAmmo=function(n){const a=__origVol(n);try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
+{const __origRock=fireRocket;fireRocket=function(){const a=__origRock();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 {const __origFire=fireAmmo;fireAmmo=function(){const a=__origFire();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 function __drawRemote(){
   try{
@@ -4154,7 +4156,7 @@ requestAnimationFrame(frame);
   document.addEventListener('DOMContentLoaded',()=>document.body.appendChild(box));
   setInterval(()=>{
     const st=G().state||'?';
-    box.textContent='giriş: '+(uid?'tamam':dbg.auth)+' | durum: '+st+'\nyazma: '+(dbg.ok?'başarılı':'yok')+(dbg.err?'\nHATA: '+dbg.err:'')+'\nuzak oyuncu: '+Object.keys(window.__rem).length+(window.__remErr?'\nçizim: '+window.__remErr:'');
+    box.textContent='giriş: '+(uid?'tamam':dbg.auth)+' | durum: '+st+'\nyazma: '+(dbg.ok?'başarılı':'yok')+(dbg.err?'\nHATA: '+dbg.err:'')+'\nuzak oyuncu: '+Object.keys(window.__rem).length+(window.__remErr?'\nçizim: '+window.__remErr:'')+'\natış: '+(window.__shotSent||0)+' gönderildi / '+(window.__shotGot||0)+' alındı'+(window.__shotErr?' HATA '+window.__shotErr:'');
   },500);
   window.__rem={};        // uid -> {rec,dx,dy,da,seen}
   window.__shots=[];      // {x,y,a,m,t}
@@ -4182,7 +4184,7 @@ requestAnimationFrame(frame);
       if(!ready)return;
       const r=s.val();
       if(!r||r.by===uid)return;
-      window.__shots.push({x:r.x,y:r.y,a:r.a,m:r.m,t:Date.now()});
+      window.__shotGot=(window.__shotGot||0)+1;window.__shots.push({x:r.x,y:r.y,a:r.a,m:r.m,t:Date.now()});
     });
     q.once('value',()=>{ready=true});
     db.ref('rooms/'+ROOM+'/players/'+uid).onDisconnect().remove();
@@ -4211,7 +4213,7 @@ requestAnimationFrame(frame);
       const g=G();
       if(ok&&db&&g.p&&g.state==='play'){
         const p=g.p,M=g.M;
-        db.ref('rooms/'+ROOM+'/shots').push({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),by:uid,m:M.n}).catch(()=>{});
+        window.__shotSent=(window.__shotSent||0)+1;db.ref('rooms/'+ROOM+'/shots').push({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),by:uid,m:M.n}).catch(e=>{window.__shotErr=(e&&e.code)||String(e)});
       }
     }catch(e){}
   };
