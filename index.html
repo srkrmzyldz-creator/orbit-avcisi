@@ -849,6 +849,7 @@ function __checkHits(){
     const now=Date.now();
     if(!window.__maxSh||p.sh>window.__maxSh)window.__maxSh=p.sh;
     if(state!=='play')return;
+    for(let i=pb.length-1;i>=0;i--){const b=pb[i];for(const k in window.__rem){const o=window.__rem[k];if(!o.rec||o.dx===null||o.rec.m!==M.n)continue;if(Math.hypot(b.x-o.dx,b.y-o.dy)<22){pb.splice(i,1);break}}}
     for(const s of window.__shots){
       if(s.hit||s.m!==M.n)continue;
       const age=(now-s.t)/1000; if(age>0.9)continue;
@@ -888,8 +889,6 @@ function __drawRemote(){
       const age=(now-s.t)/1000;
       if(age>0.9||s.m!==M.n)continue;
       keep.push(s);
-      ctx.save();ctx.globalAlpha=1-age/0.9;ctx.strokeStyle='#ff7a59';ctx.lineWidth=2.5;ctx.beginPath();
-      ctx.moveTo(s.x,s.y);ctx.lineTo(s.x+Math.cos(s.a)*(300+age*900),s.y+Math.sin(s.a)*(300+age*900));ctx.stroke();ctx.restore();
     }
     window.__shots=keep;
     window.__remErr='';
@@ -4274,7 +4273,7 @@ requestAnimationFrame(frame);
   // Ateş paylaşımı: oyun kendi kapsamındaki fireAmmo'dan çağırır
   function initHud(){
     const st=document.createElement('style');
-    st.textContent='body.hudoff .stack,body.hudoff #pfDock,body.hudoff .dock,body.hudoff #mmw,body.hudoff #fps,body.hudoff #secT,body.hudoff #feed{display:none!important}\n.stack,#pfDock,#mmw,#fps,#secT{zoom:.5}';
+    st.textContent='body.hudoff #menu .mbtn:not(#hudLock){display:none!important}\n.stack,#pfDock,#mmw,#fps{zoom:.5}\n#hudRow,#jrow,.acts{zoom:.5}\n#secT{zoom:1!important;font-size:22px!important;font-weight:800!important}';
     document.head.appendChild(st);
     const menu=document.getElementById('menu');
     if(menu){
