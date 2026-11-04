@@ -546,7 +546,7 @@ button:focus-visible{outline:2px solid var(--ally);outline-offset:2px}
     <div class="legend">
       <span><i style="background:#5ee0ff"></i>Sen</span>
       <span><i style="background:#ff7a59"></i>Düşman</span>
-      <span><i style="background:#ffc857"></i>Üs ve Sibelon</span>
+      <span><i style="background:#ffc857"></i>Üs ve Sibeltor</span>
       <span><i style="background:rgba(255,200,87,.7)"></i>Kutu</span>
       <span><i style="background:#c79bff"></i>Portal</span>
     </div>
@@ -630,10 +630,10 @@ const MAPS=[
   {n:'2-1 Neptün Sektörü',own:1,nb:2,d:'Neptün şirketinin ana üssü. Neptün pilotları için güvenli, Saturn için düşman toprağı.',req:0,dif:0.1,cnt:14,rm:1,bt:90,bg:['#1a4aa0','#1a8fa0','#3b3bca'],pl:[{x:900,y:900,r:240,c1:'#8fd0ff',c2:'#14367a',atm:'#5ec8ff',bands:1},{x:3000,y:3000,r:140,c1:'#b8e8ff',c2:'#1d4a86',atm:'#7fd0ff',bands:0}],po:[{to:5,x:500,y:2000}],w:[70,30,0,0,0]},
   {n:'1-2 Halka Geçidi',own:0,nb:2,d:'Saturn bölgesinin ikinci sektörü. Orta seviye düşmanlar, 1,25 kat kredi.',req:40,dif:0.2,cnt:16,rm:1.25,bt:80,bg:['#a0502a','#6a3a1a','#7a2b5a'],pl:[{x:1000,y:3000,r:190,c1:'#ffb38a',c2:'#7a2a14',atm:'#ff8a5a',bands:1},{x:3300,y:1300,r:120,c1:'#ffd98a',c2:'#8a4a1d',atm:'#ffb05a',bands:0}],po:[{to:0,x:500,y:2000},{to:3,x:3500,y:2000},{to:4,x:2000,y:3500}],w:[30,40,30,0,0]},
   {n:'1-3 Kızıl Kuşak',own:0,nb:2,ast:1,d:'Saturn bölgesinin asteroit kuşağı. Sert düşmanlar, 1,5 kat kredi.',req:80,dif:0.4,cnt:18,rm:1.5,bt:60,bg:['#9a3b2a','#a06a1a','#6a2a4a'],pl:[{x:1000,y:3000,r:190,c1:'#ffb38a',c2:'#7a2a14',atm:'#ff8a5a',bands:1},{x:3300,y:1300,r:120,c1:'#ffd98a',c2:'#8a4a1d',atm:'#ffb05a',bands:0}],po:[{to:2,x:500,y:2000},{to:4,x:3500,y:2000}],w:[0,30,30,28,12]},
-  {n:'1-4 Sibelon Yuvası',own:0,nb:2,boss:1,d:'Saturn bölgesinin son sektörü, Sibelon yuvası. Çok tehlikeli, 2 kat kredi. Savaş cephesi 4-1 buradan açılır.',req:150,dif:0.7,cnt:22,rm:2,bt:40,bg:['#7a2a6a','#4a1a5a','#a02a5a'],pl:[{x:1000,y:3000,r:190,c1:'#ffb38a',c2:'#7a2a14',atm:'#ff8a5a',bands:1},{x:3300,y:1300,r:120,c1:'#ffd98a',c2:'#8a4a1d',atm:'#ffb05a',bands:0}],po:[{to:3,x:500,y:2000},{to:8,x:3500,y:2000},{to:2,x:2000,y:500}],w:[0,15,30,55,0]},
+  {n:'1-4 Sibeltor Yuvası',own:0,nb:2,boss:1,d:'Saturn bölgesinin son sektörü, Sibeltor yuvası. Çok tehlikeli, 2 kat kredi. Savaş cephesi 4-1 buradan açılır.',req:150,dif:0.7,cnt:22,rm:2,bt:40,bg:['#7a2a6a','#4a1a5a','#a02a5a'],pl:[{x:1000,y:3000,r:190,c1:'#ffb38a',c2:'#7a2a14',atm:'#ff8a5a',bands:1},{x:3300,y:1300,r:120,c1:'#ffd98a',c2:'#8a4a1d',atm:'#ffb05a',bands:0}],po:[{to:3,x:500,y:2000},{to:8,x:3500,y:2000},{to:2,x:2000,y:500}],w:[0,15,30,55,0]},
   {n:'2-2 Buz Geçidi',own:1,nb:2,d:'Neptün bölgesinin ikinci sektörü. Orta seviye düşmanlar, 1,25 kat kredi.',req:40,dif:0.2,cnt:16,rm:1.25,bt:80,bg:['#1a5a90','#2a6fa0','#2b2bba'],pl:[{x:900,y:900,r:240,c1:'#8fd0ff',c2:'#14367a',atm:'#5ec8ff',bands:1},{x:3000,y:3000,r:140,c1:'#b8e8ff',c2:'#1d4a86',atm:'#7fd0ff',bands:0}],po:[{to:1,x:3500,y:2000},{to:6,x:500,y:2000},{to:7,x:2000,y:500}],w:[30,40,30,0,0]},
   {n:'2-3 Mavi Kuşak',own:1,nb:2,ast:1,d:'Neptün bölgesinin asteroit kuşağı. Sert düşmanlar, 1,5 kat kredi.',req:80,dif:0.4,cnt:18,rm:1.5,bt:60,bg:['#1a3a8a','#1a6a8a','#4a2bca'],pl:[{x:900,y:900,r:240,c1:'#8fd0ff',c2:'#14367a',atm:'#5ec8ff',bands:1},{x:3000,y:3000,r:140,c1:'#b8e8ff',c2:'#1d4a86',atm:'#7fd0ff',bands:0}],po:[{to:5,x:3500,y:2000},{to:7,x:500,y:2000}],w:[0,30,30,28,12]},
-  {n:'2-4 Derin Boşluk',own:1,nb:2,boss:1,d:'Neptün bölgesinin son sektörü, Sibelon yuvası. Çok tehlikeli, 2 kat kredi. Savaş cephesi 4-2 buradan açılır.',req:150,dif:0.7,cnt:22,rm:2,bt:40,bg:['#2a2aa0','#1a3a7a','#5a2aa0'],pl:[{x:900,y:900,r:240,c1:'#8fd0ff',c2:'#14367a',atm:'#5ec8ff',bands:1},{x:3000,y:3000,r:140,c1:'#b8e8ff',c2:'#1d4a86',atm:'#7fd0ff',bands:0}],po:[{to:6,x:3500,y:2000},{to:9,x:500,y:2000},{to:5,x:2000,y:3500}],w:[0,15,30,55,0]},
+  {n:'2-4 Derin Boşluk',own:1,nb:2,boss:1,d:'Neptün bölgesinin son sektörü, Sibeltor yuvası. Çok tehlikeli, 2 kat kredi. Savaş cephesi 4-2 buradan açılır.',req:150,dif:0.7,cnt:22,rm:2,bt:40,bg:['#2a2aa0','#1a3a7a','#5a2aa0'],pl:[{x:900,y:900,r:240,c1:'#8fd0ff',c2:'#14367a',atm:'#5ec8ff',bands:1},{x:3000,y:3000,r:140,c1:'#b8e8ff',c2:'#1d4a86',atm:'#7fd0ff',bands:0}],po:[{to:6,x:3500,y:2000},{to:9,x:500,y:2000},{to:5,x:2000,y:3500}],w:[0,15,30,55,0]},
   {n:'4-1 Saturn Cephesi',own:0,pvp:1,nb:3,d:'Saturn şirketinin PvP haritası. 4-4 Savaş Alanı geçidi burada. Neptün pilotları için düşman toprağı. 2,5 kat kredi.',req:200,dif:0.5,cnt:0,rm:2.5,bt:60,bg:['#8a3a1a','#5a2a3a','#7a2a2a'],pl:[{x:1500,y:1500,r:200,c1:'#ffb0a0',c2:'#6a1a1a',atm:'#ff7a6a',bands:1},{x:3000,y:2800,r:150,c1:'#a0b8ff',c2:'#1a2a6a',atm:'#7a9aff',bands:0}],po:[{to:4,x:500,y:2000},{to:10,x:3500,y:2000}],w:[0,15,30,55,0]},
   {n:'4-2 Neptün Cephesi',own:1,pvp:1,nb:3,d:'Neptün şirketinin PvP haritası. 4-4 Savaş Alanı geçidi burada. Saturn pilotları için düşman toprağı. 2,5 kat kredi.',req:200,dif:0.5,cnt:0,rm:2.5,bt:60,bg:['#1a3a8a','#2a2a6a','#3a2a7a'],pl:[{x:1500,y:1500,r:200,c1:'#ffb0a0',c2:'#6a1a1a',atm:'#ff7a6a',bands:1},{x:3000,y:2800,r:150,c1:'#a0b8ff',c2:'#1a2a6a',atm:'#7a9aff',bands:0}],po:[{to:7,x:3500,y:2000},{to:10,x:500,y:2000}],w:[0,15,30,55,0]},
   {n:'4-4 Savaş Alanı',own:-1,pvp:1,nb:6,ast:1,d:'Saturn ve Neptün pilotlarının ortak PvP haritası. 4-1 (Saturn) ve 4-2 (Neptün) üzerinden girilir. 3 kat kredi.',req:200,dif:0.5,cnt:0,rm:3,bt:60,bg:['#7a2a2a','#2a3a7a','#5a2a5a'],pl:[{x:1500,y:1500,r:200,c1:'#ffb0a0',c2:'#6a1a1a',atm:'#ff7a6a',bands:1},{x:3000,y:2800,r:150,c1:'#a0b8ff',c2:'#1a2a6a',atm:'#7a9aff',bands:0}],po:[{to:8,x:500,y:2000},{to:9,x:3500,y:2000}],w:[0,15,30,55,0]}
@@ -652,7 +652,7 @@ const ARENA_MAP={n:'Arena',own:-1,pvp:1,cnt:0,rm:1,bt:9999,req:0,dif:0,bg:['#5a1
    waves: [NPC türü indeksi (TYPES), adet]  ·  cost: kapıyı kurmak için gereken parça  ·  spin: bir çevirmenin uridium bedeli */
 const GATES=[{id:'a',n:'Alfa',col:'#5ee0ff',cost:32,spin:100,waves:[[0,20],[1,20],[2,20],[3,20],[4,12],[5,10]]}];
 const GATE_RW={kr:10000000,uri:25000,xp:1000000,hon:100000,elmas:25000};
-/* NPC imhasında kapı parçası düşme şansı ve adedi: [şans, adet] (Streuner, Lordakia, Saimon, Mordon, Devolarium, Sibelon) */
+/* NPC imhasında kapı parçası düşme şansı ve adedi: [şans, adet] (Strenor, Lordavia, Saimera, Mordaxis, Devolix, Sibeltor) */
 const GP_DROP=[[.05,1],[.07,1],[.09,1],[.12,1],[.25,2],[1,3]];
 /* Kapı basışı ödülleri (şans toplamı 1; kalan = kapı parçası). k: ammo = cephane, rock = rastgele roket paketi, part = kapı parçası */
 const SPIN_T=[{p:.30,k:'ammo',id:'zumrut',n:100,l:'Zümrüt X2'},{p:.25,k:'ammo',id:'yakut',n:75,l:'Yakut X3'},{p:.20,k:'ammo',id:'elmas',n:50,l:'Elmas X4'},{p:.20,k:'rock'},{p:.05,k:'part'}];
@@ -796,12 +796,12 @@ const UP=[
 
 /* ---------- Düşman türleri ---------- */
 const TYPES=[
-  {n:'Streuner',d:'Kırmızı zırhlı, çok toplu hafif savaş gemisi. İlk sektörlerin en yaygın düşmanı; gruplar halinde dolaşır.',loc:'X-1, X-2',base:800,shd:400,hp:1200,spd:150,dmg:20,dmx:'20',rew:800,xp:400,hon:2,uri:1,r:24,fire:1.4,col:'#ff6b5e'},
-  {n:'Lordakia',d:'Işıldayan, dikenli kristal yaratık. X-2 ile X-5 arasındaki her sektörde bulunur.',loc:'X-2, X-3, X-4, X-5',base:2000,shd:2000,hp:4000,spd:130,dmg:80,dmx:'80',rew:800,xp:800,hon:4,uri:2,r:28,fire:1.3,col:'#5fe0d0'},
-  {n:'Saimon',d:'Kanatlı, dokunaçlı karanlık avcı. Hızlıdır ve çift atış yapar.',loc:'X-3, X-4',base:6000,shd:3000,hp:9000,spd:170,dmg:175,dmx:'150-200',rew:1600,xp:1600,hon:8,uri:4,r:26,fire:1.1,col:'#9aa5c0',pat:'two',bs:420},
-  {n:'Mordon',d:'Kızıl diskli, ayaklı ağır savaş kapsülü. Üçlü yelpaze atışı yapar.',loc:'X-3, X-4',base:20000,shd:10000,hp:30000,spd:100,dmg:342,dmx:'293-390',rew:6400,xp:3200,hon:16,uri:8,r:38,fire:1.6,col:'#ff8a4d',pat:'fan',want:300},
-  {n:'Devolarium',d:'Yeşil ışıklı dev savaş platformu. Çok yüksek can ve ağır çift atış.',loc:'X-3',base:100000,shd:100000,hp:200000,spd:80,dmg:1050,dmx:'900-1200',rew:51200,xp:6400,hon:32,uri:16,r:52,fire:2,col:'#8cff3d',pat:'two',want:330},
-  {n:'Sibelon',d:'Sektörün devi. Zırhlı gövdesi ve yıkıcı yelpaze atışıyla en tehlikeli NPC. Sadece X-4 sektöründe belirir.',loc:'X-4',base:200000,shd:200000,hp:400000,spd:60,dmg:2319,dmx:'1988-2650',rew:102400,xp:12800,hon:64,uri:32,r:70,fire:1.8,col:'#7fc7b8',pat:'fan',want:380},
+  {n:'Strenor',d:'Kırmızı zırhlı, çok toplu hafif savaş gemisi. İlk sektörlerin en yaygın düşmanı; gruplar halinde dolaşır.',loc:'X-1, X-2',base:800,shd:400,hp:1200,spd:150,dmg:20,dmx:'20',rew:800,xp:400,hon:2,uri:1,r:24,fire:1.4,col:'#ff6b5e'},
+  {n:'Lordavia',d:'Işıldayan, dikenli kristal yaratık. X-2 ile X-5 arasındaki her sektörde bulunur.',loc:'X-2, X-3, X-4, X-5',base:2000,shd:2000,hp:4000,spd:130,dmg:80,dmx:'80',rew:800,xp:800,hon:4,uri:2,r:28,fire:1.3,col:'#5fe0d0'},
+  {n:'Saimera',d:'Kanatlı, dokunaçlı karanlık avcı. Hızlıdır ve çift atış yapar.',loc:'X-3, X-4',base:6000,shd:3000,hp:9000,spd:170,dmg:175,dmx:'150-200',rew:1600,xp:1600,hon:8,uri:4,r:26,fire:1.1,col:'#9aa5c0',pat:'two',bs:420},
+  {n:'Mordaxis',d:'Kızıl diskli, ayaklı ağır savaş kapsülü. Üçlü yelpaze atışı yapar.',loc:'X-3, X-4',base:20000,shd:10000,hp:30000,spd:100,dmg:342,dmx:'293-390',rew:6400,xp:3200,hon:16,uri:8,r:38,fire:1.6,col:'#ff8a4d',pat:'fan',want:300},
+  {n:'Devolix',d:'Yeşil ışıklı dev savaş platformu. Çok yüksek can ve ağır çift atış.',loc:'X-3',base:100000,shd:100000,hp:200000,spd:80,dmg:1050,dmx:'900-1200',rew:51200,xp:6400,hon:32,uri:16,r:52,fire:2,col:'#8cff3d',pat:'two',want:330},
+  {n:'Sibeltor',d:'Sektörün devi. Zırhlı gövdesi ve yıkıcı yelpaze atışıyla en tehlikeli NPC. Sadece X-4 sektöründe belirir.',loc:'X-4',base:200000,shd:200000,hp:400000,spd:60,dmg:2319,dmx:'1988-2650',rew:102400,xp:12800,hon:64,uri:32,r:70,fire:1.8,col:'#7fc7b8',pat:'fan',want:380},
   {bot:1,n:'Saturn Avcısı',d:'Saturn şirketinin savaş gemisi. Neptün pilotlarının düşmanı.',hp:900,spd:190,dmg:22,rew:300,r:26,fire:.9,col:'#ffb066',bs:420},
   {bot:1,n:'Neptün Avcısı',d:'Neptün şirketinin savaş gemisi. Saturn pilotlarının düşmanı.',hp:900,spd:190,dmg:22,rew:300,r:26,fire:.9,col:'#5ec8ff',bs:420}
 ];
@@ -921,7 +921,7 @@ function __trackRemote(){
 }
 function __autoFire(){
   try{
-    if(enemies.length)enemies.length=0;
+    for(let i=enemies.length-1;i>=0;i--){if(enemies[i].ab||enemies[i].bot)enemies.splice(i,1)}
     __trackRemote();
     return;
     if(state!=='play'||!p||p.cd>0||window.__dead)return;
@@ -1695,7 +1695,7 @@ const AMMO=[
 const ROCKETS=[
   {id:'r1',n:'Mızrak',dmg:400,spd:520,col:'#ffb066',price:150,pack:5,d:'Hafif güdümlü roket. Hedefi takip eder.'},
   {id:'r2',n:'Kargı',dmg:1200,spd:560,col:'#6fc3ff',price:450,pack:5,d:'Orta ağırlıkta, güçlü roket.'},
-  {id:'r3',n:'Yıldırım',dmg:3000,spd:620,col:'#e08bff',price:1200,pack:5,d:'Ağır roket. Sibelon gibi dev gemiler için.'}
+  {id:'r3',n:'Yıldırım',dmg:3000,spd:620,col:'#e08bff',price:1200,pack:5,d:'Ağır roket. Sibeltor gibi dev gemiler için.'}
 ];
 const rk=[];let rcd=0;
 const curAmmo=()=>AMMO.find(a=>a.id===S.sel)||AMMO[0];
@@ -1854,7 +1854,7 @@ function spawnEnemy(){
   let x,y,d,tries=0;
   do{x=rnd(150,WORLD-150);y=rnd(150,WORLD-150);d=Math.hypot(x-ST.x,y-ST.y);tries++}
   while((d<500||Math.hypot(x-p.x,y-p.y)<500)&&tries<40);
-  let ti=pickType(clamp((d-500)/1500+M.dif,0,1));if(Math.random()<RV)ti=6+(1-S.co);
+  const SECT={1:[0],2:[1,0],3:[1,2,3,4],4:[1,2,3,5]};const SL_=SECT[parseInt(M.n)]||[0];let ti=SL_[Math.floor(Math.random()*SL_.length)];
   if(ti===0)for(let i=0;i<3;i++)mkEnemy(x+rnd(-60,60),y+rnd(-60,60),0);
   else mkEnemy(x,y,ti);
 }
@@ -1862,7 +1862,7 @@ function spawnBoss(){
   let x,y,tries=0;
   do{x=rnd(300,WORLD-300);y=rnd(300,WORLD-300);tries++}
   while((Math.hypot(x-ST.x,y-ST.y)<1400||Math.hypot(x-p.x,y-p.y)<900)&&tries<60);
-  mkEnemy(x,y,5);toast('Sektörde Sibelon belirdi.');
+  mkEnemy(x,y,5);toast('Sektörde Sibeltor belirdi.');
 }
 const RES2=[{k:'sep',n:'Seprom',col:'#ffd36a',sell:20},{k:'xer',n:'Xerium',col:'#7dffb0',sell:40}];
 /* NPC türüne göre kargo: [Seprom, Xerium]; en zayıftan en güçlüye kademeli */
@@ -1963,7 +1963,7 @@ function logEv(t,col){
 /* ---------- Görev sistemi: 20 seviye, her seviyede bir görev (NPC avı), ödül: kredi + uridium + TP + şeref ---------- */
 const QMAX=20;
 /* Her seviyede 3 görev (toplam 60). Hedefler: [NPC türü, adet] ya da ['k', adet] = kutu topla.
-   0 Streuner, 1 Lordakia, 2 Saimon, 3 Mordon, 4 Devolarium, 5 Sibelon. Görev biçimi seviyeye göre döner: tek hedef / ikili / kutu + NPC */
+   0 Strenor, 1 Lordavia, 2 Saimera, 3 Mordaxis, 4 Devolix, 5 Sibeltor. Görev biçimi seviyeye göre döner: tek hedef / ikili / kutu + NPC */
 const QM=[0,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5],QB=[10,8,6,5,3,2];
 const qc=(ti,L)=>{const v=QB[ti]*(1+L*.15);return ti>=4?Math.max(2,Math.round(v)):Math.max(5,Math.round(v/5)*5)};
 const qbox=L=>Math.ceil((8+L*3)/5)*5;
@@ -3475,7 +3475,7 @@ function drawFull(){
   for(const e of enemies){
     c.fillStyle=e.t.col;c.beginPath();
     c.arc(e.x*k,e.y*k,e.ti===5?14:(e.ti===3||e.ti===4)?9:7,0,7);c.fill();
-    if(e.ti===5){c.fillStyle='#ffc857';c.font='700 20px '+FONT;c.textBaseline='bottom';c.fillText('Sibelon',e.x*k,e.y*k-18)}
+    if(e.ti===5){c.fillStyle='#ffc857';c.font='700 20px '+FONT;c.textBaseline='bottom';c.fillText('Sibeltor',e.x*k,e.y*k-18)}
   }
   c.strokeStyle='rgba(232,238,251,.5)';c.lineWidth=2;c.strokeRect(cam.x*k,cam.y*k,W*k,H*k);
   c.save();c.translate(p.x*k,p.y*k);c.rotate(p.a);
@@ -4006,7 +4006,7 @@ function gatePlan(){
   for(const e of enemies){const d=dist(e,p);if(d<nd){nd=d;near=e}}
   if(!cur||dist(cur,p)>nd+90||dist(cur,p)>RANGE*1.2)cur=near;
   GA.tgt=cur;p.target=cur;
-  /* düşman tehlike ağırlığı: dakikadaki hasar gücünün karekökü (Streuner 1, Sibelon ~17) */
+  /* düşman tehlike ağırlığı: dakikadaki hasar gücünün karekökü (Strenor 1, Sibeltor ~17) */
   const ws=enemies.map(e=>{const t=e.t,sh=t.pat==='fan'?3:t.pat==='two'?2:1;return Math.min(GA.wc,Math.sqrt(Math.max(14,(t.dmg||20)*sh/(t.fire||1.5))/14))});
   const near_b=[];
   for(const b of eb){const dx=b.x-p.x,dy=b.y-p.y;if(dx*dx+dy*dy<440*440)near_b.push(b)}
@@ -4405,10 +4405,10 @@ const sys=(ch,x)=>add(ch,{n:'',x,c:'#8d9bbd',tg:'',sy:1});
 
 /* Sohbet metinleri (çevrim dışı simülasyon pilotları) */
 const P={
-  g:['Selam herkese','Sibelon avına gelen var mı?','Arena kaçta başlıyor?','Portal civarında düşman var, dikkat','Kapı parçası satan var mı?','Hangi harita en iyi XP veriyor?','Dün 3 kapı bitirdim','Roket stoğum bitti','Şirket savaşı kızıştı bugün','Lazer cephanesi önerisi olan?','gg, güzel savaştı','anyone for arena?','Looking for a clan','Uridium yine yetmiyor','Yeni gemiyi aldım, çok iyi','Sektör 3 bomba gibi dolu'],
-  t:['Kolay gelsin pilotlar','Abi arenada kim var?','Hocam hangi gemi alınır?','Sektörde gezen var mı?','Yeni kapı ne zaman açılıyor?','Bugün şansım yok, hep ölüyorum','Günlük ödülü aldınız mı?','Sibelon kimde şu an?','Kardeşim roket nerden alınır?','Klan arıyorum, aktif olsun','Akşama toplanıp kapı yapalım mı?','Selamlar, nasılsınız?'],
-  k:['Klan, toplanın!','Kim Sibelon vuruyor?','Bugün klan görevi yapalım','Üste dönüyorum, onarım','Yardım lazım, düşman kovalıyor','Aferin klan','Selam klan','Arenaya gireyim mi?','Dikkat, portalda düşman var'],
-  c:['Şirket pilotları, toplanın!','Düşman şirket sektörde, dikkat','Kim Sibelon vuruyor?','Üssü birlikte savunalım','Bugün şerefte öndeyiz','Düşman pilot gördüm, portal yakınında','Yeni gelenlere yardım edelim','Arena için kim hazır?','Şirketimiz için!','Sektör temiz, devam'],
+  g:['Selam herkese','Sibeltor avına gelen var mı?','Arena kaçta başlıyor?','Portal civarında düşman var, dikkat','Kapı parçası satan var mı?','Hangi harita en iyi XP veriyor?','Dün 3 kapı bitirdim','Roket stoğum bitti','Şirket savaşı kızıştı bugün','Lazer cephanesi önerisi olan?','gg, güzel savaştı','anyone for arena?','Looking for a clan','Uridium yine yetmiyor','Yeni gemiyi aldım, çok iyi','Sektör 3 bomba gibi dolu'],
+  t:['Kolay gelsin pilotlar','Abi arenada kim var?','Hocam hangi gemi alınır?','Sektörde gezen var mı?','Yeni kapı ne zaman açılıyor?','Bugün şansım yok, hep ölüyorum','Günlük ödülü aldınız mı?','Sibeltor kimde şu an?','Kardeşim roket nerden alınır?','Klan arıyorum, aktif olsun','Akşama toplanıp kapı yapalım mı?','Selamlar, nasılsınız?'],
+  k:['Klan, toplanın!','Kim Sibeltor vuruyor?','Bugün klan görevi yapalım','Üste dönüyorum, onarım','Yardım lazım, düşman kovalıyor','Aferin klan','Selam klan','Arenaya gireyim mi?','Dikkat, portalda düşman var'],
+  c:['Şirket pilotları, toplanın!','Düşman şirket sektörde, dikkat','Kim Sibeltor vuruyor?','Üssü birlikte savunalım','Bugün şerefte öndeyiz','Düşman pilot gördüm, portal yakınında','Yeni gelenlere yardım edelim','Arena için kim hazır?','Şirketimiz için!','Sektör temiz, devam'],
   p:['Hazırım','Önden ben giderim','Sen sol kanada geç','Ateş!','Düşmanı kilitledim','Hedef sende, kilitle','Kalkan düşüyor, geri çekil','Kutuları toplayalım','Üste dönelim mi?']
 };
 const RP=['👍','Tamam','Anlaşıldı','Geliyorum','Haklısın','Olur','Süper','Hazırım','😄'];
