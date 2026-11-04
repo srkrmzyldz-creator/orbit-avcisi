@@ -802,7 +802,7 @@ let state='play',time=0,flash=0,spawnT=0,bossT=40,sessionKills=0,tab='market';
 const enemies=[],pb=[],eb=[],boxes=[],parts=[],texts=[],rings=[];
 function muzzle(x,y,a,am){const c=am&&am.id==='kuvars'?'#5ee0ff':(am&&am.col)||'#5ee0ff';for(let i=0;i<3;i++)parts.push({x,y,vx:Math.cos(a+rnd(-.35,.35))*rnd(120,260),vy:Math.sin(a+rnd(-.35,.35))*rnd(120,260),l:.14,m:.14,c:'#ffffff',s:2});parts.push({x,y,vx:0,vy:0,l:.08,m:.08,c,s:7})}
 window.__G=()=>({state:state,p:p,M:M,S:S,sid:(()=>{try{return ship().id}catch(e){return ''}})(),mh:(()=>{try{return val('hull')}catch(e){return 100}})()});
-{const __origVol=volleyAmmo;volleyAmmo=function(n){const a=__origVol(n);try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
+{const __origVol=volleyAmmo;volleyAmmo=function(n){const a=__origVol(n);try{if(window.__shotPub)window.__shotPub(n)}catch(e){}return a};}
 {const __origRock=fireRocket;fireRocket=function(){const a=__origRock();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 {const __origFire=fireAmmo;fireAmmo=function(){const a=__origFire();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 function __pickRemote(){
@@ -858,7 +858,7 @@ function __checkHits(){
       const d=Math.hypot(p.x-(s.x+dx*t), p.y-(s.y+dy*t));
       if(d<=(p.r||14)+8){
         s.hit=true;
-        let rem=(val('hull')||100)*0.1;
+        let rem=(s.n||1)*LDMG[2];
         if(p.sh>0){const k=Math.min(p.sh,rem);p.sh-=k;rem-=k}
         if(rem>0)p.hp=Math.max(0,p.hp-rem);
         window.__hits=(window.__hits||0)+1;
@@ -4246,7 +4246,7 @@ requestAnimationFrame(frame);
       if(!ready)return;
       const r=s.val();
       if(!r||r.by===uid)return;
-      window.__shotGot=(window.__shotGot||0)+1;window.__shots.push({x:r.x,y:r.y,a:r.a,m:r.m,t:Date.now()});
+      window.__shotGot=(window.__shotGot||0)+1;window.__shots.push({x:r.x,y:r.y,a:r.a,m:r.m,n:r.n,t:Date.now()});
     });
     q.once('value',()=>{ready=true});
     db.ref('rooms/'+ROOM+'/players/'+uid).onDisconnect().remove();
@@ -4260,7 +4260,7 @@ requestAnimationFrame(frame);
     if(g.state!=='play'){db.ref('rooms/'+ROOM+'/players/'+uid).update({hp:0}).catch(()=>{});return}
     const p=g.p,M=g.M,S=g.S;
     const mh=g.mh||100;const hp=Math.max(0,Math.min(100,Math.round(100*(Number(p.hp)||0)/mh)));
-    db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,m:M.n,sid:g.sid||'',n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
+    db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,t:Date.now(),m:M.n,sid:g.sid||'',n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
   }
   // onDisconnect ile ayrılan oyuncuyu temizle
   const origPub=publish;
@@ -4273,7 +4273,7 @@ requestAnimationFrame(frame);
   // Ateş paylaşımı: oyun kendi kapsamındaki fireAmmo'dan çağırır
   function initHud(){
     const st=document.createElement('style');
-    st.textContent='body.hudoff #menu .mbtn:not(#hudLock){display:none!important}\n.stack,#pfDock,#mmw,#fps{zoom:.5}\n#hudRow,#jrow,.acts{zoom:.5}\n#secT{zoom:1!important;font-size:22px!important;font-weight:800!important}';
+    st.textContent='body.hudoff #menu .mbtn:not(#hudLock){display:none!important}\n.stack,#pfDock,#mmw,#fps{zoom:.5}\n#hudRow .hs,#ammoBtn,#rockBtn{transform:scale(.55)}\n#secT{zoom:1!important;font-size:22px!important;font-weight:800!important}';
     document.head.appendChild(st);
     const menu=document.getElementById('menu');
     if(menu){
@@ -4281,15 +4281,21 @@ requestAnimationFrame(frame);
       b.id='hudLock';b.className='mbtn';b.type='button';b.setAttribute('aria-label','HUD gizle/göster');b.textContent='🔒';
       b.addEventListener('click',()=>{const off=document.body.classList.toggle('hudoff');b.textContent=off?'🔓':'🔒'});
       menu.insertBefore(b,menu.firstChild);
+      const prow=document.createElement('div');prow.id='profRow';
+      ['mProf','mShip','mLog'].forEach(id=>{const el=document.getElementById(id);if(el)prow.appendChild(el)});
+      menu.insertBefore(prow,b.nextSibling);
     }
+    const ps=document.createElement('style');
+    ps.textContent='#profRow{display:flex;gap:4px}#profRow .mbtn{flex:1 1 0;min-width:0}';
+    document.head.appendChild(ps);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initHud);else initHud();
-  window.__shotPub=function(){
+  window.__shotPub=function(n){
     try{
       const g=G();
       if(ok&&db&&g.p&&g.state==='play'){
         const p=g.p,M=g.M;
-        window.__shotSent=(window.__shotSent||0)+1;db.ref('rooms/'+ROOM+'/shots').push({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),by:uid,m:M.n}).catch(e=>{window.__shotErr=(e&&e.code)||String(e)});
+        window.__shotSent=(window.__shotSent||0)+1;db.ref('rooms/'+ROOM+'/shots').push({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),by:uid,m:M.n,n:n||1}).catch(e=>{window.__shotErr=(e&&e.code)||String(e)});
       }
     }catch(e){}
   };
