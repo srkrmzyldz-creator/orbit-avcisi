@@ -801,10 +801,26 @@ const cam={x:0,y:0};
 let state='play',time=0,flash=0,spawnT=0,bossT=40,sessionKills=0,tab='market';
 const enemies=[],pb=[],eb=[],boxes=[],parts=[],texts=[],rings=[];
 function muzzle(x,y,a,am){const c=am&&am.id==='kuvars'?'#5ee0ff':(am&&am.col)||'#5ee0ff';for(let i=0;i<3;i++)parts.push({x,y,vx:Math.cos(a+rnd(-.35,.35))*rnd(120,260),vy:Math.sin(a+rnd(-.35,.35))*rnd(120,260),l:.14,m:.14,c:'#ffffff',s:2});parts.push({x,y,vx:0,vy:0,l:.08,m:.08,c,s:7})}
-window.__G=()=>({state:state,p:p,M:M,S:S});
+window.__G=()=>({state:state,p:p,M:M,S:S,sid:(()=>{try{return ship().id}catch(e){return ''}})()});
 {const __origVol=volleyAmmo;volleyAmmo=function(n){const a=__origVol(n);try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 {const __origRock=fireRocket;fireRocket=function(){const a=__origRock();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 {const __origFire=fireAmmo;fireAmmo=function(){const a=__origFire();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
+function __autoFire(){
+  try{
+    if(state!=='play'||!p||p.cd>0||window.__dead)return;
+    if(dist(p,ST)<ST.safe)return;
+    const now=Date.now();
+    for(const k in window.__rem){
+      const o=window.__rem[k], r=o.rec;
+      if(!r||now-o.seen>5000||r.m!==M.n||!(r.hp>0)||o.dx===null)continue;
+      const dx=o.dx-p.x, dy=o.dy-p.y, d=Math.hypot(dx,dy);
+      if(d>650)continue;
+      const aim=Math.atan2(dy,dx);
+      const diff=Math.abs(((aim-p.a+Math.PI)%(Math.PI*2)+Math.PI*2)%(Math.PI*2)-Math.PI);
+      if(diff<0.3){volleyAmmo(1);p.cd=0.35;break}
+    }
+  }catch(e){window.__fireErr=String((e&&e.message)||e)}
+}
 function __checkHits(){
   try{
     const now=Date.now();
@@ -838,8 +854,8 @@ function __drawRemote(){
       const kk=Math.min(1,rdt*12);
       o.dx+=(r.x-o.dx)*kk;o.dy+=(r.y-o.dy)*kk;o.da+=(r.a-o.da)*kk;
       ctx.save();ctx.translate(o.dx,o.dy);ctx.rotate(o.da);
-      ctx.beginPath();ctx.moveTo(18,0);ctx.lineTo(-12,10);ctx.lineTo(-7,0);ctx.lineTo(-12,-10);ctx.closePath();
-      ctx.fillStyle='#ff7a59';ctx.strokeStyle='#ffd0c0';ctx.lineWidth=2;ctx.fill();ctx.stroke();
+      const sp=ship();const sid=(r.sid&&SPR[r.sid])?r.sid:sp.id;
+      ctx.scale(sp.sc,sp.sc);SPR[sid](ctx,false,time);
       ctx.restore();
       ctx.save();ctx.fillStyle='#ffb0a0';ctx.font='700 12px '+FONT;ctx.textAlign='center';
       ctx.fillText(r.n||'Pilot',o.dx,o.dy-26);ctx.restore();
@@ -2310,6 +2326,7 @@ function render(){
   }
 
   __checkHits();
+  __autoFire();
   __drawRemote();
   for(const e of enemies){
     const r=e.t.r;
@@ -4220,7 +4237,7 @@ requestAnimationFrame(frame);
     if(!ok||!db||!g.p||g.state!=='play')return;
     const p=g.p,M=g.M,S=g.S;
     const hp=Math.max(0,Math.min(100,Number(p.hp)||0));
-    db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,m:M.n,n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
+    db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,m:M.n,sid:g.sid||'',n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
   }
   // onDisconnect ile ayrılan oyuncuyu temizle
   const origPub=publish;
