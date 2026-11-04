@@ -802,6 +802,7 @@ let state='play',time=0,flash=0,spawnT=0,bossT=40,sessionKills=0,tab='market';
 const enemies=[],pb=[],eb=[],boxes=[],parts=[],texts=[],rings=[];
 function muzzle(x,y,a,am){const c=am&&am.id==='kuvars'?'#5ee0ff':(am&&am.col)||'#5ee0ff';for(let i=0;i<3;i++)parts.push({x,y,vx:Math.cos(a+rnd(-.35,.35))*rnd(120,260),vy:Math.sin(a+rnd(-.35,.35))*rnd(120,260),l:.14,m:.14,c:'#ffffff',s:2});parts.push({x,y,vx:0,vy:0,l:.08,m:.08,c,s:7})}
 window.__G=()=>({state:state,p:p,M:M,S:S});
+{const __origFire=fireAmmo;fireAmmo=function(){const a=__origFire();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 function __drawRemote(){
   try{
     const now=Date.now();
@@ -4204,12 +4205,15 @@ requestAnimationFrame(frame);
     ref.onDisconnect().remove();
   };
 
-  // Ateş paylaşımı: oyuncu ateş ettiğinde yayınlanır
-  const __fa=fireAmmo;
-  fireAmmo=function(){
-    const a=__fa();
-    try{const g=G();if(ok&&db&&g.p&&g.state==='play'){const p=g.p,M=g.M;db.ref('rooms/'+ROOM+'/shots').push({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),by:uid,m:M.n}).catch(()=>{})}}catch(e){}
-    return a;
+  // Ateş paylaşımı: oyun kendi kapsamındaki fireAmmo'dan çağırır
+  window.__shotPub=function(){
+    try{
+      const g=G();
+      if(ok&&db&&g.p&&g.state==='play'){
+        const p=g.p,M=g.M;
+        db.ref('rooms/'+ROOM+'/shots').push({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),by:uid,m:M.n}).catch(()=>{});
+      }
+    }catch(e){}
   };
 })();
 
