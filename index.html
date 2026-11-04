@@ -861,7 +861,7 @@ function __checkHits(){
         if(p.sh>0){const k=Math.min(p.sh,rem);p.sh-=k;rem-=k}
         if(rem>0)p.hp=Math.max(0,p.hp-rem);
         window.__hits=(window.__hits||0)+1;
-        if(p.hp<=0){try{die()}catch(e){}}
+        if(p.hp<=0){try{die();p.target=null;if(atk)atkOff()}catch(e){}}
       }
     }
   }catch(e){window.__hitErr=String((e&&e.message)||e)}
@@ -4257,7 +4257,8 @@ requestAnimationFrame(frame);
 
   function publish(){
     const g=G();
-    if(!ok||!db||!g.p||g.state!=='play')return;
+    if(!ok||!db||!g.p)return;
+    if(g.state!=='play'){db.ref('rooms/'+ROOM+'/players/'+uid).update({hp:0}).catch(()=>{});return}
     const p=g.p,M=g.M,S=g.S;
     const mh=g.mh||100;const hp=Math.max(0,Math.min(100,Math.round(100*(Number(p.hp)||0)/mh)));
     db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,m:M.n,sid:g.sid||'',n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
@@ -4271,6 +4272,19 @@ requestAnimationFrame(frame);
   };
 
   // Ateş paylaşımı: oyun kendi kapsamındaki fireAmmo'dan çağırır
+  function initHud(){
+    const st=document.createElement('style');
+    st.textContent='body.hudoff .stack,body.hudoff #pfDock,body.hudoff .dock,body.hudoff #mmw,body.hudoff #fps,body.hudoff #secT,body.hudoff #feed{display:none!important}\n.stack,#pfDock,#mmw,#fps,#secT{zoom:.5}';
+    document.head.appendChild(st);
+    const menu=document.getElementById('menu');
+    if(menu){
+      const b=document.createElement('button');
+      b.id='hudLock';b.className='mbtn';b.type='button';b.setAttribute('aria-label','HUD gizle/göster');b.textContent='🔒';
+      b.addEventListener('click',()=>{const off=document.body.classList.toggle('hudoff');b.textContent=off?'🔓':'🔒'});
+      menu.insertBefore(b,menu.firstChild);
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initHud);else initHud();
   window.__shotPub=function(){
     try{
       const g=G();
