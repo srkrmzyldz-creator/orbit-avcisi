@@ -805,6 +805,28 @@ window.__G=()=>({state:state,p:p,M:M,S:S});
 {const __origVol=volleyAmmo;volleyAmmo=function(n){const a=__origVol(n);try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 {const __origRock=fireRocket;fireRocket=function(){const a=__origRock();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
 {const __origFire=fireAmmo;fireAmmo=function(){const a=__origFire();try{if(window.__shotPub)window.__shotPub()}catch(e){}return a};}
+function __checkHits(){
+  try{
+    const now=Date.now();
+    if(!window.__maxSh||p.sh>window.__maxSh)window.__maxSh=p.sh;
+    if(window.__dead){ if(now>window.__deadUntil){p.hp=100;p.sh=window.__maxSh;window.__dead=false;} return; }
+    for(const s of window.__shots){
+      if(s.hit||s.m!==M.n)continue;
+      const age=(now-s.t)/1000; if(age>0.9)continue;
+      const L=300+age*900, dx=Math.cos(s.a), dy=Math.sin(s.a);
+      let t=(p.x-s.x)*dx+(p.y-s.y)*dy; t=Math.max(0,Math.min(L,t));
+      const d=Math.hypot(p.x-(s.x+dx*t), p.y-(s.y+dy*t));
+      if(d<=(p.r||14)+8){
+        s.hit=true;
+        let rem=20;
+        if(p.sh>0){const k=Math.min(p.sh,rem);p.sh-=k;rem-=k}
+        if(rem>0)p.hp=Math.max(0,p.hp-rem);
+        window.__hits=(window.__hits||0)+1;
+        if(p.hp<=0){window.__dead=true;window.__deadUntil=now+3000}
+      }
+    }
+  }catch(e){window.__hitErr=String((e&&e.message)||e)}
+}
 function __drawRemote(){
   try{
     const now=Date.now();
@@ -2287,6 +2309,7 @@ function render(){
     ctx.restore();
   }
 
+  __checkHits();
   __drawRemote();
   for(const e of enemies){
     const r=e.t.r;
@@ -4156,7 +4179,7 @@ requestAnimationFrame(frame);
   document.addEventListener('DOMContentLoaded',()=>document.body.appendChild(box));
   setInterval(()=>{
     const st=G().state||'?';
-    box.textContent='giriş: '+(uid?'tamam':dbg.auth)+' | durum: '+st+'\nyazma: '+(dbg.ok?'başarılı':'yok')+(dbg.err?'\nHATA: '+dbg.err:'')+'\nuzak oyuncu: '+Object.keys(window.__rem).length+(window.__remErr?'\nçizim: '+window.__remErr:'')+'\natış: '+(window.__shotSent||0)+' gönderildi / '+(window.__shotGot||0)+' alındı'+(window.__shotErr?' HATA '+window.__shotErr:'');
+    box.textContent='giriş: '+(uid?'tamam':dbg.auth)+' | durum: '+st+'\nyazma: '+(dbg.ok?'başarılı':'yok')+(dbg.err?'\nHATA: '+dbg.err:'')+'\nuzak oyuncu: '+Object.keys(window.__rem).length+(window.__remErr?'\nçizim: '+window.__remErr:'')+(G().p?'\ncan: '+Math.round(G().p.hp)+' kalkan: '+Math.round(G().p.sh)+' vuruş: '+(window.__hits||0)+(window.__dead?' ÖLDÜN':''):'')+'\natış: '+(window.__shotSent||0)+' gönderildi / '+(window.__shotGot||0)+' alındı'+(window.__shotErr?' HATA '+window.__shotErr:'');
   },500);
   window.__rem={};        // uid -> {rec,dx,dy,da,seen}
   window.__shots=[];      // {x,y,a,m,t}
