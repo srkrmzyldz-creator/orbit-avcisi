@@ -624,7 +624,7 @@ const exN=id=>EXN[id||S.ship]||1;
 function exl(id){const a=(S.ex&&S.ex[id||S.ship])||[];return Array.from({length:exN(id)},(_,i)=>CPUS.some(c=>c.id===a[i])?a[i]:'')}
 function exUsedOther(cid,i){return Object.keys(S.ex||{}).some(sid=>exl(sid).some((c,j)=>c===cid&&!(sid===S.ship&&j===i)))}
 const cpuAvail=id=>exl().includes(id);
-function hudClean(h){if(!h||typeof h!=='object')return null;if(h.k==='cpu'&&CPUS.some(c=>c.id===h.id))return{k:'cpu',id:h.id};if(h.k==='las')return['kuvars','zumrut','yakut','elmas'].includes(h.id)?{k:'las',id:h.id}:{k:'las'};if(h.k==='rok')return['r1','r2','r3'].includes(h.id)?{k:'rok',id:h.id}:{k:'rok'};return null}
+function hudClean(h){if(!h||typeof h!=='object')return null;if(h.k==='cpu'&&CPUS.some(c=>c.id===h.id))return{k:'cpu',id:h.id};if(h.k==='las')return['kuvars','zumrut','yakut','elmas'].includes(h.id)?{k:'las',id:h.id}:{k:'las'};if(h.k==='rok')return['r1','r2','r3'].includes(h.id)?{k:'rok',id:h.id}:{k:'rok'};if(h.k==='cfg')return{k:'cfg'};return null}
 /* ---------- Sektörler ve atlayış portalları ---------- */
 const MAPS=[
   {n:'1-1 Saturn Sektörü',own:0,nb:2,d:'Saturn şirketinin ana üssü. Saturn pilotları için güvenli, Neptün için düşman toprağı.',req:0,dif:0.1,cnt:14,rm:1,bt:90,bg:['#b0602a','#7a4a1a','#8a3b5a'],po:[{to:2,x:3500,y:2000}],w:[70,30,0,0,0]},
@@ -643,10 +643,10 @@ MAPS.forEach(m=>{m.po.forEach(q=>{q.x*=2;q.y*=2});m.cnt*=2});
 let M=MAPS[0],AST=[],JR=120,PS=170,jt=0,jq=null,jcd=0,jf=0,pAct=null,lt=0,stT=0,RV=.3,selMap=0,fx=[],bsq=[];
 const BN=['Kaplan','Vega','Orion','Zephyr','Nova','Titanyum','Atlas','Karasu','Pulsar','Kuyruklu','Rüzgar','Astra','Kaos','Mızrak','Boran','Helios','Kuzey','Fırtına','Yıldırım','Çelik','Şahin','Gölge','Alev','Buz','Kor','Zirve','Akıncı','Tufan'];
 const BOTS=[];
-MAPS.forEach((m,mi)=>{for(let k=0;k<(m.nb||4);k++){const co=m.own>=0?(k<(m.pvp?2:3)?m.own:1-m.own):k%2;BOTS.push({map:mi,co,rate:rnd(2,6)})}});
+MAPS.forEach((m,mi)=>{for(let k=0;k<(m.nb||4);k++){const co=m.own>=0?(k<(m.pvp?2:3)?m.own:1-m.own):k%2;void 0}});
 const foe=e=>!(e.bot&&e.co===S.co);
 /* Arena durumu: süre 60 sn, eşleşme 5 sn, ödül AR_RW, daire yarıçapı 640 */
-const AR={on:false,phase:'',t:0,q:0,dur:60,mm:5,R:640,cx:4000,cy:4000,reward:100000,bot:null};
+const AR={on:false,phase:'',t:0,q:0,dur:60,mm:5,R:960,cx:4000,cy:4000,reward:100000,bot:null};
 const AR_RW={kr:100000,uri:1000,xp:50000,hon:500,elmas:1000,zumrut:5000};
 const ARENA_MAP={n:'Arena',own:-1,pvp:1,cnt:0,rm:1,bt:9999,req:0,dif:0,bg:['#5a1a3a','#1a1a5a','#3a1a6a'],pl:[],po:[]};
 /* ---------- Galaksi kapıları ----------
@@ -663,6 +663,17 @@ const GATE_MAP={n:'Alfa Kapısı',own:-1,pvp:1,cnt:0,rm:1,bt:9999,req:0,dif:0,bg
 const GT={on:false,phase:'',g:null,w:-1,t:0,xt:0,bk:'',ap:true,man:-99};
 
 let S={ex:{},cpuOwn:[],hud:[null,null,null,null,null,null,null,null],cg:{sep:0,xer:0},ch:{las:0,rok:0},xt:0,flag:'',nick:'Pilot',pos:null,dr:{last:'',i:0},set:{o:'port',v:2,z:1,ea:70,hz:60,hn:6,gr:1,sh:1,q:'a',hp:{}},coSet:false,coAt:0,gt:{a:{p:0,b:0,c:0,bt:0}},q:{done:[],act:{}},score:0,bs:[],co:0,map:0,eq:{lf2:0,lf3:0},ld:{lf2:0,lf3:0},md:{hiz:0,kal:0},inv:{kal:[0,0,0],hiz:[0,0,0]},gr:{},credits:0,xp:0,hon:0,uri:0,kills:0,ship:IS_DEV?'admin':'std',owned:[],ammo:{zumrut:300,yakut:100,elmas:50},rockets:{r1:20,r2:10,r3:5},sel:'kuvars',rsel:'r1',lv:{laser:0,hull:0,shield:0,engine:0},rs:{laser:0,shield:0,hull:0,npcdmg:0,npcrew:0}};
+/* Konfigürasyon kaydı doğrulama: S.cf={n:aktif konfi(1|2), o:pasif konfinin kayıtlı donanımı} */
+function cfClean(r){
+  const n=r&&r.n===2?2:1,o=r&&r.o;
+  if(!o||typeof o!=='object')return{n,o:null};
+  const V=['','lf1','lf2','lf3','kal1','kal2','kal3'],G=/^(kal|hiz)[123]$/;
+  const ld={lf2:clamp(+(o.ld&&o.ld.lf2)||0,0,999),lf3:clamp(+(o.ld&&o.ld.lf3)||0,0,999)},gen={},ex={};
+  if(o.gen&&typeof o.gen==='object')for(const id in o.gen)if(SHIPS.some(x=>x.id===id)&&Array.isArray(o.gen[id]))gen[id]=o.gen[id].slice(0,16).map(x=>typeof x==='string'&&G.test(x)?x:'');
+  if(o.ex&&typeof o.ex==='object')for(const id in o.ex)if(SHIPS.some(x=>x.id===id)&&Array.isArray(o.ex[id]))ex[id]=o.ex[id].slice(0,24).map(x=>CPUS.some(c=>c.id===x)?x:'');
+  const ds=Array.isArray(o.ds)?o.ds.slice(0,8).map(s=>Array.isArray(s)?s.slice(0,2).map(x=>V.includes(x)?x:''):[]):[];
+  return{n,o:{ld,gen,ex,ds}};
+}
 let NEW_PLAYER=false;try{NEW_PLAYER=!localStorage.getItem(SAVE)}catch(e){}
 try{
   const r=JSON.parse(localStorage.getItem(SAVE));
@@ -688,6 +699,7 @@ try{
     if(r.ex&&typeof r.ex==='object')for(const id in r.ex)if(SHIPS.some(x=>x.id===id)&&Array.isArray(r.ex[id]))S.ex[id]=r.ex[id].slice(0,24).map(x=>CPUS.some(c=>c.id===x)?x:'');
     if(Array.isArray(r.cpuOwn))S.cpuOwn=r.cpuOwn.filter(id=>CPUS.some(c=>c.id===id));
     if(Array.isArray(r.hud))S.hud=[0,1,2,3,4,5,6,7].map(i=>hudClean(r.hud[i]));
+    if(r.cf&&typeof r.cf==='object')S.cf=cfClean(r.cf);
     if(r.gt&&r.gt.a&&typeof r.gt.a==='object')for(const k of['p','b','c','bt'])S.gt.a[k]=Math.max(0,Math.floor(+r.gt.a[k]||0));
     if(Array.isArray(r.owned))S.owned=r.owned.filter(id=>SHIPS.some(s=>s.id===id));
     if(r.lv)for(const k in S.lv)S.lv[k]=clamp(+r.lv[k]||0,0,MAXLV);
@@ -715,6 +727,7 @@ function applyDevKit(){
   S.dn=Array.from({length:8},()=>({t:'iris',l:6,s:['lf3','kal3']}));
 }
 if(IS_DEV&&!S.devKit)applyDevKit();
+{const vis=S.hud.slice(0,(S.set&&S.set.hn)||6);if(!S.hud.some(h=>h&&h.k==='cfg')){const i=vis.indexOf(null);if(i>=0)S.hud[i]={k:'cfg'}}}
 if(!Array.isArray(S.bs)||S.bs.length!==BOTS.length)S.bs=BOTS.map(()=>Math.round(rnd(1500,8000)));
 var _svT,_svD;
 function saveNow(){clearTimeout(_svT);_svT=0;if(!_svD)return;_svD=false;try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(e){}}
@@ -927,6 +940,7 @@ function __trackRemote(){
 function __autoFire(){
   try{
     for(let i=enemies.length-1;i>=0;i--){if(enemies[i].ab||enemies[i].bot)enemies.splice(i,1)}
+    if(p.target&&!p.target.remote&&(p.target.ab||p.target.bot))p.target=null;
     __trackRemote();
     return;
     if(state!=='play'||!p||p.cd>0||window.__dead)return;
@@ -958,6 +972,7 @@ function __checkHits(){
       const d=Math.hypot(p.x-(s.x+dx*t), p.y-(s.y+dy*t));
       if(d<=(p.r||14)+8){
         s.hit=true;
+        p.lastHit=time;
         if(cpuT>0)continue;
         let rem=(s.n||1)*LDMG[2];
         if(p.sh>0){const k=Math.min(p.sh,rem);p.sh-=k;rem-=k}
@@ -1894,13 +1909,13 @@ function boom(x,y,col,n,sz){
 }
 function ftext(x,y,txt,col){texts.push({x,y,txt,col,l:1})}
 const nearPortal=()=>M.po.some(q=>Math.hypot(p.x-q.x,p.y-q.y)<PS);
-let hudEdit=false,hudK='',hudPickI=-1;
+let hudEdit=false,hudK='',hudPickI=-1,cfLock=0;
 function buildCpu(){
   return '<p>CPU modülleri tek seferlik satın alınır. Kullanmak için Geliştir > Gemi ekstraları bölümünden bir yuvaya takman gerekir. Admin gemisinde 3 Saniye otomatik takılıdır.</p>'+CPUS.map(c=>{const own=cpuOwned().includes(c.id)||(c.id==='uc3'&&IS_DEV);return `<div class="ship" style="grid-template-columns:minmax(0,1fr)"><div class="si"><div class="sn"><b style="color:${c.col}">${c.n}</b><span class="free">${own?'Sahip':fmt(c.price)+' '+unitOf(c)}</span></div><p>${c.d}</p></div>${own?'':`<div class="btns"><button class="buy" type="button" data-cpub="${c.id}"${!canPay(c)?' disabled':''}>Satın al · ${fmt(c.price)} ${unitOf(c)}</button></div>`}</div>`}).join('');
 }
 function cpuAdminFix(){if(!IS_DEV||S.ship!=='admin')return;S.ex.admin=S.ex.admin||[];if(exl('admin')[0]!=='uc3')S.ex.admin[0]='uc3';if(S.hud.some(h=>h&&h.k==='cpu'&&h.id==='uc3'))return;let i=S.hud.indexOf(null);if(i<0)i=0;S.hud[i]={k:'cpu',id:'uc3'}}
 function useCpu(id){const c=CPUS.find(x=>x.id===id);if(!c)return;if(state!=='play'){toast('CPU yalnızca oyun alanında kullanılır.');return}if(!cpuAvail(id)){toast('CPU bu gemide bir ekstra yuvasına takılı değil.');return}if(cpuCd>0){toast('CPU soğuyor: '+Math.ceil(cpuCd)+' sn');return}cpuT=c.dur;cpuCd=c.cd;ring(p.x,p.y,'#5ee0ff',160);toast(c.n+' CPU aktif')}
-function hudKey(){const r=curRocket(),a=curAmmo();return [JSON.stringify(S.hud),hudEdit,cpuT>0,Math.ceil(cpuCd),a.id,JSON.stringify(S.ammo),r.id,JSON.stringify(S.rockets),rcd>0,S.ship,cpuOwned().length,S.set.hn].join('|')}
+function hudKey(){const r=curRocket(),a=curAmmo();return [JSON.stringify(S.hud),hudEdit,cfN(),Math.max(0,Math.ceil((cfLock-Date.now())/1000)),cpuT>0,Math.ceil(cpuCd),a.id,JSON.stringify(S.ammo),r.id,JSON.stringify(S.rockets),rcd>0,S.ship,cpuOwned().length,S.set.hn].join('|')}
 function hudRender(){
   const row=$('hudRow');if(!row)return;applyHud();
   row.classList.toggle('edit',hudEdit);
@@ -1908,6 +1923,7 @@ function hudRender(){
     let lab='+',cls='hs empty';
     if(h&&h.k==='cpu'){const c=CPUS.find(x=>x.id===h.id);lab=cpuCd>0?Math.ceil(cpuCd)+' sn':cpuT>0?'Aktif':c.n;cls='hs'+(cpuAvail(h.id)&&cpuCd<=0?'':' cool')+(cpuT>0?' on':'')}
     else if(h&&h.k==='las'){if(h.id){const a=AMMO.find(x=>x.id===h.id),n=S.ammo[a.id]|0;lab='×'+a.m+(a.price?' '+fmt(n):'');cls='hs'+(a.price&&n<=0?' cool':'')+(S.sel===a.id?' on':'')}else{lab=curAmmo().n;cls='hs'}}
+    else if(h&&h.k==='cfg'){const cl=Date.now()<cfLock;lab=cl?Math.ceil((cfLock-Date.now())/1000)+' sn':'Konfi '+cfN();cls='hs'+(cl?' cool':'')+(cfN()===2?' on':'')}
     else if(h&&h.k==='rok'){if(h.id){const r=ROCKETS.find(x=>x.id===h.id),n=S.rockets[r.id]|0;lab=fmt(n);cls='hs'+(n<=0||rcd>0?' cool':'')+(S.rsel===r.id?' on':'')}else{lab=curRocket().n;cls='hs'+(rcd>0?' cool':'')}}
     return `<button type="button" class="${cls}" data-hs="${i}"><canvas width="68" height="68" data-hi="${i}"></canvas><b>${lab}</b></button>`;
   }).join('');
@@ -1916,6 +1932,7 @@ function hudRender(){
     if(!h)return;
     if(h.k==='las')drawAmmoIcon(c,68,68,AMMO.findIndex(a=>a.id===(h.id||curAmmo().id)));
     else if(h.k==='rok')drawRocketIcon(c,68,68,ROCKETS.findIndex(r=>r.id===(h.id||curRocket().id)));
+    else if(h.k==='cfg'){c.fillStyle=cfN()===2?'#ff9a3d':'#7fd8ff';c.font='700 30px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('K'+cfN(),34,36)}
     else{const cp=CPUS.find(x=>x.id===h.id);c.fillStyle=cp.col;c.font='700 34px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(cp.n.charAt(0),34,36)}
   });
   hudLayout();
@@ -1924,9 +1941,10 @@ let hudPickTab='';
 function hudPickRender(){
   const t=hudPickTab,cpus=CPUS.filter(c=>cpuAvail(c.id));
   const L=['<button type="button" class="hpo" data-hpick="clear">Boş bırak</button>',
-    '<div class="hpt">'+[['las','Lazer'],['rok','Roketler'],['cpu','CPU']].map(([k,n])=>`<button type="button" class="hptb${t===k?' on':''}" data-hptab="${k}">${n}</button>`).join('')+'</div>'];
+    '<div class="hpt">'+[['las','Lazer'],['rok','Roketler'],['cpu','CPU'],['cfg','Konfi']].map(([k,n])=>`<button type="button" class="hptb${t===k?' on':''}" data-hptab="${k}">${n}</button>`).join('')+'</div>'];
   if(t==='las')L.push('<div class="hph">Cephane</div>',...AMMO.map(a=>`<button type="button" class="hpo" data-hpick="las:${a.id}">${a.n} ×${a.m}${a.price?' · '+(S.ammo[a.id]|0)+' adet':''}</button>`));
   else if(t==='rok')L.push('<div class="hph">Roketler</div>',...ROCKETS.map(r=>`<button type="button" class="hpo" data-hpick="rok:${r.id}">${r.n} · ${S.rockets[r.id]|0} adet</button>`));
+  else if(t==='cfg')L.push('<div class="hph">Konfigürasyon</div>','<button type="button" class="hpo" data-hpick="cfg:1">Konfi 1 / Konfi 2 geçiş düğmesi</button>');
   else if(t==='cpu'){if(cpus.length)L.push('<div class="hph">CPU</div>',...cpus.map(c=>`<button type="button" class="hpo" data-hpick="cpu:${c.id}">CPU · ${c.n}</button>`));else L.push('<p>Bu gemide takılı CPU yok. Geliştir > Gemi ekstraları bölümünden tak.</p>')}
   else L.push('<p>Bir sekme seç: Lazer cephanesi, Roket ya da CPU.</p>');
   $('hpkL').innerHTML=L.join('');
@@ -2197,8 +2215,10 @@ function updatePlayer(dt,inSafe){
     const nk=1/(1-rb('nano'));
     p.hp=Math.min(maxH,p.hp+maxH*.25*dt*nk);
     p.sh=Math.min(maxS,p.sh+maxS*.5*dt*nk);
-  }else if(time-p.lastHit>3){
-    p.sh=Math.min(maxS,p.sh+maxS*.12*dt/(1-rb('nano')));
+  }else if(time-p.lastHit>5){
+    const nn=1/(1-rb('nano'));
+    p.hp=Math.min(maxH,p.hp+maxH/30*dt*nn);
+    p.sh=Math.min(maxS,p.sh+maxS/15*dt*nn);
   }
 }
 
@@ -2820,7 +2840,7 @@ function buildUpgrades(){
 }
 function buildExtras(){
   const a=exl();
-  let h=`<div class="sec">Gemi ekstraları · ${ship().name} · ${a.length} yuva</div><p>CPU'lar yalnızca bir yuvaya takılıyken kullanılabilir. Bir CPU aynı anda tek yuvada olabilir. Yuvaya dokunarak CPU seç.</p><div class="tiles" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr))">`;
+  let h=`<div class="sec">Gemi ekstraları · ${ship().name} · ${a.length} yuva · Konfi ${cfN()}</div><p>CPU'lar yalnızca bir yuvaya takılıyken kullanılabilir. Bir CPU aynı anda tek yuvada olabilir. Yuvaya dokunarak CPU seç.</p><div class="tiles" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr))">`;
   h+=a.map((c,i)=>{const cp=CPUS.find(x=>x.id===c),lock=i===0&&S.ship==='admin'&&IS_DEV;return `<button type="button" class="tile${cp?' sel':''}" data-ex="${i}" style="--oc:${cp?cp.col:'#243252'}"><b style="font-size:16px">${cp?cp.n:'—'}</b><span>${cp?'CPU takılı':'Boş yuva'}</span><em>${lock?'Kilitli':'Dokun: değiştir'}</em></button>`}).join('');
   h+=`</div><p>Yuva sayısı: ${SHIPS.filter(s=>EXN[s.id]).map(s=>s.name+' '+EXN[s.id]).join(' · ')}</p>`;
   return h;
@@ -2846,7 +2866,7 @@ function buildRes(){
 }
 function buildEq(){
   const n=nL(),[l2,l3]=ldc(),l1=n-l2-l3,cnt={lf1:l1,lf2:l2,lf3:l3};
-  let h=`<div class="sec">Silah ekipmanı · ${n} lazer yuvası · ${ship().name}</div>`;
+  let h=`<div class="sec">Silah ekipmanı · ${n} lazer yuvası · ${ship().name} · Konfi ${cfN()}</div>`;
   LF.forEach(f=>{
     let b='';
     if(f.price>0)b=`<button class="buy" type="button" data-eqm="${f.id}"${cnt[f.id]<=0?' disabled':''}>Çıkar</button><button class="buy" type="button" data-eqp="${f.id}"${l1<=0||cnt[f.id]>=S.eq[f.id]?' disabled':''}>Tak</button><button class="buy" type="button" data-eqb="${f.id}"${!canPay(f)?' disabled':''}>+1 · ${fmt(f.price)} ${unitOf(f)}</button>`;
@@ -2921,8 +2941,8 @@ function buildHangar(){
   const lt=(id,x,c)=>`<button type="button" class="hg-tile${x?'':' base'}" style="--c:${LC[id]}"${x?' data-hx="las:'+id+'"':' disabled'}><span class="hg-bar" style="background:${LC[id]}"></span><b>${ln(id)}</b>${c?'<i>×'+c+'</i>':''}</button>`;
   const gt=(k,t,x,c,dis)=>`<button type="button" class="hg-tile" style="--c:${k==='kal'?'#5ee0ff':'#ffc857'}"${x}${dis?' disabled':''}><canvas class="thumb" width="176" height="132" data-gen="${k}:${t}"></canvas><b>${GEAR[k][t-1].n}</b>${c?'<i>×'+c+'</i>':''}</button>`;
   const empt='<button type="button" class="hg-tile empty" disabled><b>—</b></button>';
-  let h=`<div class="ship cur" style="grid-template-columns:88px minmax(0,1fr)"><canvas class="thumb" width="176" height="132" data-ship-id="${S.ship}"></canvas><div class="si"><div class="sn"><b>${ship().name}</b></div><p>Gövde ${fmt(val('hull'))} · Kalkan ${fmt(val('shield'))} · Hız ${fmt(val('engine'))} · Lazer gücü ${fmt(power())}</p></div></div>`;
-  h+='<div class="sec">Ekipmanlar · gemide takılı</div>';
+  let h=cfBar()+`<div class="ship cur" style="grid-template-columns:88px minmax(0,1fr)"><canvas class="thumb" width="176" height="132" data-ship-id="${S.ship}"></canvas><div class="si"><div class="sn"><b>${ship().name}</b></div><p>Gövde ${fmt(val('hull'))} · Kalkan ${fmt(val('shield'))} · Hız ${fmt(val('engine'))} · Lazer gücü ${fmt(power())}</p></div></div>`;
+  h+='<div class="sec">Ekipmanlar · gemide takılı · Konfi '+cfN()+'</div>';
   let ls='';for(let i=0;i<n;i++){const id=i<l3?'lf3':i<l3+l2?'lf2':'lf1';ls+=lt(id,id!=='lf1')}
   h+=`<div class="hg-sec" style="--c:#ff5d73"><div class="hg-t"><span>Lazerler</span><b>${n} yuva · ${l3} LF-3 · ${l2} LF-2</b></div><div class="hg-grid hg-sm">${ls}</div></div>`;
   h+=buildGen();
@@ -3299,7 +3319,7 @@ function droneCard(d){
 }
 function buildDroneHangar(){
   const a=dnA();
-  let h=`<div class="sec">Drone · ${a.length}/${DMAX}</div>`;
+  let h=`<div class="sec">Drone · ${a.length}/${DMAX} · Konfi ${cfN()}</div>`;
   if(!a.length)return h+'<p class="hg-n">Drone yok · Market › Drone bölümünden satın al.</p>';
   a.forEach((d,i)=>{
     const def=DRONES.find(x=>x.id===d.t);
@@ -3308,6 +3328,59 @@ function buildDroneHangar(){
   });
   return h+'<p>Bölmeye dokun: lazer ya da kalkan jeneratörü arasında dolaşır. Drone\'un kendisi güç vermez, yalnızca taktığın parça verir.</p>';
 }
+/* ---------- Konfigürasyonlar: Konfi 1 / Konfi 2 ----------
+   Her konfide ayrı kurulur: lazer yuvaları, jeneratörler (tüm gemiler), CPU/ekstralar, drone bölmeleri (Iris/Flax).
+   Parçalar ortaktır: aynı parça iki konfide de kullanılabilir (aynı anda yalnızca biri aktif).
+   Canlı alanlar (S.ld, S.gr[].gen, S.ex, dn[].s) her zaman AKTİF konfidir; pasif olan S.cf.o içinde saklanır. */
+const CF_V=['','lf1','lf2','lf3','kal1','kal2','kal3'];
+function cfN(){return S.cf&&S.cf.n===2?2:1}
+function cfSnap(){
+  const gen={},ex={};
+  for(const id in S.gr)if(Array.isArray(S.gr[id].gen))gen[id]=S.gr[id].gen.slice();
+  for(const id in (S.ex||{}))ex[id]=(S.ex[id]||[]).slice();
+  return{ld:{lf2:S.ld.lf2|0,lf3:S.ld.lf3|0},gen,ex,ds:dnA().map(d=>d.s.slice())};
+}
+function cfApply(c){
+  S.ld.lf2=c.ld.lf2|0;S.ld.lf3=c.ld.lf3|0;
+  for(const id in S.gr)S.gr[id].gen=(c.gen[id]||[]).slice();
+  for(const id in c.gen)if(!S.gr[id])S.gr[id]={gen:c.gen[id].slice()};
+  S.ex={};for(const id in c.ex)S.ex[id]=c.ex[id].slice();
+  dnA().forEach((d,i)=>{const s=c.ds[i]||[];d.s=d.s.map((_,j)=>CF_V.includes(s[j])?s[j]:'')});
+}
+/* Konfi özeti (hangar kartı için): lazer · jeneratör · drone */
+function cfSum(n){
+  const c=n===cfN()?cfSnap():(S.cf&&S.cf.o);
+  if(!c)return 'Boş · ilk geçişte Konfi 1\'in kopyası açılır';
+  const g=(c.gen[S.ship]||[]).slice(0,slN()),k=g.filter(x=>/^kal/.test(x)).length,s=g.filter(x=>/^hiz/.test(x)).length;
+  const nl=nL(),l3=Math.min(c.ld.lf3,S.eq.lf3,nl),l2=Math.min(c.ld.lf2,S.eq.lf2,nl-l3);
+  const dr=c.ds.reduce((a,x)=>a+x.filter(y=>y).length,0);
+  return `Lazer ${l3}×LF-3 ${l2}×LF-2 · SG ${k} · SF ${s} · Drone ${dr}`;
+}
+function cfSwap(to){
+  to=to===2?2:1;
+  if(to===cfN())return false;
+  const inShop=!$('pShop').hidden,fight=state==='play'&&!inShop&&dist(p,ST)>=ST.safe&&!nearPortal();
+  if(fight&&Date.now()<cfLock){toast('Konfi değişimi soğuyor: '+Math.ceil((cfLock-Date.now())/1000)+' sn');return false}
+  const cur=cfSnap();let nx=S.cf&&S.cf.o,fresh=false;
+  if(!nx){nx=JSON.parse(JSON.stringify(cur));fresh=true}
+  cfApply(nx);
+  S.cf={n:to,o:cur};
+  if(fight)cfLock=Date.now()+5000;
+  p.hp=Math.min(p.hp,val('hull'));p.sh=Math.min(p.sh,val('shield'));
+  hudK='';save();
+  if(inShop)renderTab();
+  toast(fresh?'Konfi '+to+' açıldı (Konfi '+(3-to)+'\'in kopyası). Hangar\'dan düzenle.':'Konfi '+to+' aktif.');
+  return true;
+}
+function cfBar(){
+  const a=cfN();
+  return `<div class="hg-sec" style="--c:#5ee0ff"><div class="hg-t"><span>Konfigürasyon</span><b>Aktif: Konfi ${a}</b></div><div class="tiles" style="grid-template-columns:1fr 1fr">${[1,2].map(n=>`<button type="button" class="tile${n===a?' sel':''}" data-cfg="${n}" style="--oc:${n===1?'#7fd8ff':'#ff9a3d'}"><b>Konfi ${n}</b><span>${cfSum(n)}</span><em>${n===a?'Düzenleniyor':'Dokun: geç'}</em></button>`).join('')}</div><p class="hg-n">Her konfide lazer, jeneratör, CPU ve drone bölmeleri ayrı kurulur. Aşağıda yaptığın değişiklik aktif konfiye işlenir. Savaşta HUD'daki Konfi düğmesiyle (ya da C tuşu) 5 sn beklemeli geçiş yap.</p></div>`;
+}
+addEventListener('keydown',e=>{
+  if(e.repeat||e.ctrlKey||e.metaKey||e.altKey)return;
+  const t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))return;
+  if((e.key==='c'||e.key==='C')&&state==='play'&&$('pShop').hidden)cfSwap(cfN()===1?2:1);
+});
 const IRIS_UP=[0,4000,8000,16000,32000,64000];
 function buildIrisUp(){
   const list=dnA().map((d,i)=>[d,i]).filter(x=>x[0].t==='iris');
@@ -3384,6 +3457,7 @@ document.querySelector('#pShop .tabs').addEventListener('click',e=>{
 });
 $('tabBody').addEventListener('click',e=>{
   if(coChangeAct(e))return;
+  {const cb2=e.target.closest('button[data-cfg]');if(cb2){cfSwap(+cb2.dataset.cfg);return}}
   if(drAct(e))return;
   {const ms=e.target.closest('button[data-msec]');if(ms){mSec=ms.dataset.msec;renderTab();$('tabBody').scrollTop=0;return}}
   if(eqAct(e))return;
@@ -3414,6 +3488,7 @@ $('hudRow').addEventListener('click',e=>{
   if(hudEdit){hudPick(i);return}
   const h=S.hud[i];if(!h){toast('Düzenle ile yuvaya CPU, lazer ya da roket ekle.');return}
   if(h.k==='cpu')useCpu(h.id);
+  else if(h.k==='cfg')cfSwap(cfN()===1?2:1);
   else if(h.k==='las'&&h.id){const a=AMMO.find(x=>x.id===h.id);if(a.price&&!(S.ammo[a.id]>0)){toast(a.n+' cephanesi yok. Üs\'ten satın al.');return}S.sel=a.id;save();updateActs();hudK='';toast(a.n+' · ×'+a.m+' hasar')}
   else if(h.k==='las'){const ids=AMMO.filter(a=>a.price===0||(S.ammo[a.id]||0)>0).map(a=>a.id);const k=ids.indexOf(S.sel);S.sel=ids[(k+1)%ids.length];save();updateActs();toast(curAmmo().n+' seçildi')}
   else if(h.k==='rok'){if(h.id&&S.rsel!==h.id){S.rsel=h.id;save();updateActs();hudK=''}fireRocket()}
@@ -3442,7 +3517,7 @@ $('hudPick').addEventListener('click',e=>{
   const tb=e.target.closest('button[data-hptab]');if(tb){hudPickTab=tb.dataset.hptab;hudPickRender();return}
   const b=e.target.closest('button[data-hpick]');if(!b||hudPickI<0)return;
   const v=b.dataset.hpick;
-  S.hud[hudPickI]=v==='clear'?null:v.startsWith('las:')?{k:'las',id:v.slice(4)}:v.startsWith('rok:')?{k:'rok',id:v.slice(4)}:{k:'cpu',id:v.slice(4)};
+  S.hud[hudPickI]=v==='clear'?null:v.startsWith('las:')?{k:'las',id:v.slice(4)}:v.startsWith('rok:')?{k:'rok',id:v.slice(4)}:v.startsWith('cfg')?{k:'cfg'}:{k:'cpu',id:v.slice(4)};
   save();$('hudPick').hidden=true;hudK='';
 });
 $('genPick').addEventListener('click',e=>{
@@ -3875,35 +3950,38 @@ function arenaBot(){
   const t={n:BN[(Math.random()*BN.length)|0]+' · '+sp.name,hp:max,spd:Math.min(spd*.55,380),dmg:vol,fire:.55,r,col:'#ff5d73',rew:0,bs:760};
   return{x:AR.cx+AR.R*.6,y:AR.cy,vx:0,vy:0,t,ti:0,hp:max,max,a:Math.PI,cd:1.2,wx:0,wy:0,wt:0,aggro:true,strafe:1,flash:0,k:0,ab:1,sid:sp.id,vol,orb:Math.random()*6};
 }
+function hasRemote(){const now=Date.now();for(const k in window.__rem){const o=window.__rem[k];if(o.rec&&now-o.seen<5000&&o.rec.m===M.n)return true}return false}
 function arenaOpen(){
   if(state!=='play'||AR.phase||GT.on||p.hp<=0)return;
-  state='arenaq';AR.phase='q';AR.q=AR.mm;AR.bot=arenaBot();
+  state='arenaq';AR.phase='q';AR.q=15;AR.bot=arenaBot();
   arenaBan('ARENA · EŞLEŞME',String(AR.mm),'Rakip aranıyor…',true);
 }
 function arenaCancel(){
   if(AR.phase!=='q')return;
   AR.phase='';AR.bot=null;state='play';$('arBan').hidden=true;
 }
+function hasRemoteQ(){const now=Date.now();for(const k in window.__rem){const o=window.__rem[k];if(o.rec&&o.rec.aq===true&&now-o.seen<5000&&o.rec.m===M.n)return true}return false}
 function arenaQ(dt){
   AR.q-=dt;
-  if(AR.q<=0){arenaEnter();return}
-  const n=Math.ceil(AR.q);
-  arenaBan('ARENA · EŞLEŞME',String(n),AR.q<=3?'Rakip bulundu: '+AR.bot.t.n+'\nArenaya sıçrıyorsun…':'Rakip aranıyor…',true);
+  if(hasRemoteQ()){arenaEnter();return}
+  if(AR.q<=0){arenaCancel();toast('Uygun rakip bulunamadı, arama iptal edildi.');return}
+  arenaBan('ARENA · EŞLEŞME',String(Math.ceil(AR.q)),'Rakip aranıyor…',true);
 }
 function arenaEnter(){
+  if(atk)atkOff();
   ring(p.x,p.y,'#c79bff',150);boom(p.x,p.y,'#c79bff',40,3);
   AR.on=true;AR.phase='fight';AR.t=AR.dur;
   M=ARENA_MAP;PLAN=[];mkNeb(M.bg);AST=[];
   ST.x=-9000;ST.y=-9000;ST.safe=0;
   enemies.length=0;boxes.length=0;pb.length=0;eb.length=0;rk.length=0;parts.length=0;texts.length=0;rings.length=0;fx.length=0;bsq.length=0;
   p.x=AR.cx-AR.R*.6;p.y=AR.cy;p.vx=p.vy=0;p.a=0;p.hp=val('hull');p.sh=val('shield');p.dest=null;p.manual=false;p.lastHit=-9;
-  const b=AR.bot;enemies.push(b);p.target=b;
+  p.target=null;
   $('mapT').textContent='Arena';
   $('arBan').hidden=true;$('arHud').hidden=false;
   camInit=false;jf=1;state='play';
   ring(p.x,p.y,'#c79bff',150);
   toast('Arena başladı! 60 saniye · Rakibe kilitlendin, Saldır\'a bas.');
-  logEv('Arena: '+b.t.n+' ile karşılaşma başladı','#ff7a59');
+  logEv('Arena başladı','#ff7a59');
 }
 function arenaAI(e,dt){
   e.flash=Math.max(0,e.flash-dt);
@@ -4882,6 +4960,7 @@ function stPatrol(){
   const CFG={apiKey:"AIzaSyBJQ3VvkI5x-S_YM6C5qh2HnthHNX4BimY",authDomain:"black-galaxy-8e90c.firebaseapp.com",databaseURL:"https://black-galaxy-8e90c-default-rtdb.europe-west1.firebasedatabase.app",projectId:"black-galaxy-8e90c",storageBucket:"black-galaxy-8e90c.firebasestorage.app",messagingSenderId:"924179797714",appId:"1:924179797714:web:faba5d32651da7d5863f0b"};
   const ROOM='orbit-test';
   let db=null,uid=null,ok=false;
+  let __lk='',__lt=0;
   const G=()=>{try{return window.__G()}catch(e){return {}}};
   const dbg={err:'',ok:0,auth:'bekliyor'};
   // Ekran köşesinde durum satırı
@@ -4930,10 +5009,13 @@ function stPatrol(){
   function publish(){
     const g=G();
     if(!ok||!db||!g.p)return;
-    if(g.state!=='play'){db.ref('rooms/'+ROOM+'/players/'+uid).update({hp:0}).catch(()=>{});return}
+    if(g.state!=='play'&&g.state!=='arenaq'){db.ref('rooms/'+ROOM+'/players/'+uid).update({hp:0}).catch(()=>{});return}
     const p=g.p,M=g.M,S=g.S;
     const mh=g.mh||100;const hp=Math.max(0,Math.min(100,Math.round(100*(Number(p.hp)||0)/mh)));
-    db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,t:Date.now(),m:M.n,sid:g.sid||'',dr:g.dr||[],fl:(S.flag||''),tm:(S.team||''),n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
+    const __k=[Math.round(p.x),Math.round(p.y),+p.a.toFixed(2),hp,g.state,M.n].join('|');
+    if(__k===__lk&&Date.now()-__lt<1000)return;
+    __lk=__k;__lt=Date.now();
+    db.ref('rooms/'+ROOM+'/players/'+uid).set({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),hp:hp,t:Date.now(),m:M.n,sid:g.sid||'',dr:g.dr||[],fl:(S.flag||''),tm:(S.team||''),aq:(g.state==='arenaq'),n:String(S.nick||'Pilot').slice(0,14)}).then(()=>{dbg.ok=Date.now();dbg.err=''}).catch(e=>{dbg.err=(e&&e.code)||String(e)});
   }
   // onDisconnect ile ayrılan oyuncuyu temizle
   const origPub=publish;
@@ -4968,7 +5050,7 @@ function stPatrol(){
       const g=G();
       if(ok&&db&&g.p&&g.state==='play'){
         const p=g.p,M=g.M;
-        window.__shotSent=(window.__shotSent||0)+1;db.ref('rooms/'+ROOM+'/shots').push({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),by:uid,m:M.n,n:n||1}).catch(e=>{window.__shotErr=(e&&e.code)||String(e)});
+        window.__shotSent=(window.__shotSent||0)+1;const __rf=db.ref('rooms/'+ROOM+'/shots').push({x:Math.round(p.x),y:Math.round(p.y),a:+p.a.toFixed(3),by:uid,m:M.n,n:n||1});__rf.catch(e=>{window.__shotErr=(e&&e.code)||String(e)});setTimeout(()=>{__rf.remove().catch(()=>{})},3000);
       }
     }catch(e){}
   };
